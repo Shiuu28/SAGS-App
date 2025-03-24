@@ -1,20 +1,52 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { HomeScreen } from './src/views/home/home';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { RegisterScreen } from './src/views/register/register';
+import { Proyectos } from './src/views/proyectos/Proyectos';
+import { NewProyScreen } from './src/views/proyectos/registrarProyecto';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+
+export type RootStackParamList = {
+  HomeScreen: undefined;
+  RegisterScreen: undefined;
+  Proyectos: undefined;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+const App = () => {
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{
+        headerShown: false
+      }}>
+
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+        />
+
+        <Stack.Screen
+          name="RegisterScreen"
+          component={RegisterScreen}
+        />
+
+        <Stack.Screen
+          name="Proyectos"
+          component={Proyectos}
+        />
+
+        <Stack.Screen
+          name="NewProyScreen"
+          component={NewProyScreen}
+        />
+
+        { /*<Stack.Screen name="Profile" component={ProfileScreen} /> */}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default App;
