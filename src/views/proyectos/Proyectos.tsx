@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, TextInput, ToastAndroid, Touchable, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { RootStackParamList } from '../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -33,7 +33,7 @@ export const Proyectos = () => {
                     <Text style={styles.gestionText}>Gestión de Proyectos</Text>
                     <Text style={styles.descripcionText}>Utilizamos la métodologia ágil scrum para la gestión de proyectos, donde los equipos trabajan de manera colaborativa para entregar valor de manera iterativa.</Text>
                     <RoundedButton text='INGRESAR' onPress={() =>
-                        navigation.navigate('Proyectos')}>
+                        navigation.navigate('Perfil')}>
                     </RoundedButton>
                 </View>
             </View>

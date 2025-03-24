@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RegisterScreen } from './src/views/register/register';
 import { Proyectos } from './src/views/proyectos/Proyectos';
 import { NewProyScreen } from './src/views/proyectos/registrarProyecto';
-
+import { Perfil } from './src/views/perfil/Perfil';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -42,6 +42,12 @@ const App = () => {
           name="NewProyScreen"
           component={NewProyScreen}
         />
+
+        <Stack.Screen
+          name="Perfil"
+          component={Perfil}
+        />
+
 
         { /*<Stack.Screen name="Profile" component={ProfileScreen} /> */}
       </Stack.Navigator>
