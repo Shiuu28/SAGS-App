@@ -1,7 +1,9 @@
-import React from "react"
-import { TouchableOpacity, StyleSheet, Touchable, View, Image } from 'react-native';
+import React, { useState } from "react"
+import { TouchableOpacity, StyleSheet, FlatList, View, Image, Modal, Text } from 'react-native';
 import { MyColors } from "../theme/AppTheme";
-
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../App";
 
 interface ImageProps {
     onPress: () => void,
@@ -9,22 +11,69 @@ interface ImageProps {
 
 
 export const Nav = ({ onPress }: ImageProps) => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    const menu = [
+        { id: "1", label: "Home", action: () => navigation.navigate('HomeScreen')},
+        { id: "2", label: "Perfil", action: () => navigation.navigate("HomeScreen")},        
+        { id: "3", label: "Gestión de Proyectos", action: () => navigation.navigate("Proyectos")},
+        { id: "4", label: "Sobre Nosotros", action: () => navigation.navigate("Perfil")}
+    ];
+
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectOption, setSelectOption] = useState("Selecciona una opción")
+
+    const handleSelect = (option: { id: string; label: string }) => {
+        setSelectOption(option.label);
+        setModalVisible(false);
+    };
+
 
     return (
         <View style={styles.Nav}>
-            <TouchableOpacity onPress={onPress}>
-                <Image
-                    source={require('../../assets/sirs.jpg')}
-                    style={styles.logo}
-                />
+            <TouchableOpacity onPress={() => {
+                setModalVisible(true);
+            }}>
                 <Image
                     source={require('../../assets/menu.png')}
                     style={styles.menu}
                 />
             </TouchableOpacity>
-        </View>
+
+            <TouchableOpacity onPress={() => {
+                navigation.navigate('HomeScreen');
+            }}>
+                <Image
+                    source={require('../../assets/sirs.jpg')}
+                    style={styles.logo}
+                />
+            </TouchableOpacity>
+
+
+
+            <Modal visible={modalVisible} transparent animationType="slide">
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <FlatList
+                            data={menu}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity style={styles.option} onPress = {item.action}>
+                                    <Text style={styles.optionText}>{item.label}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                            <Text style={styles.closeButtonText}>Cerrar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        </View >
     );
 };
+
 
 const styles = StyleSheet.create({
 
@@ -39,17 +88,61 @@ const styles = StyleSheet.create({
     },
 
     menu: {
-        width: 22,
-        height: 22,
+        width: 25,
+        height: 25,
         resizeMode: 'contain',
         margin: 'auto',
-        left: 320,
+        left: 315,
+        top: 26,
     },
 
-    logo:{
+    logo: {
         width: 40,
         height: 40,
         resizeMode: 'contain',
         top: 28,
-    }
-}); 
+    },
+
+    modalContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        top: 44,
+        left: 88,
+    },
+
+    modalContent: {
+        backgroundColor: 'black',
+        padding: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: 'white',
+        width: "55%",
+        color: 'white',
+    },
+
+    option: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
+
+    optionText: {
+        fontSize: 16,
+        color: 'white',
+    },
+
+    closeButton: {
+        marginTop: 10,
+        padding: 10,
+        backgroundColor: MyColors.primary,
+        alignItems: "center",
+        borderRadius: 5,
+    },
+
+    closeButtonText: {
+        color: "white",
+        fontWeight: "bold",
+    },
+});
+
+export default Nav;

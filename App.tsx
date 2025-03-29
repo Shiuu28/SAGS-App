@@ -11,6 +11,8 @@ export type RootStackParamList = {
   HomeScreen: undefined;
   RegisterScreen: undefined;
   Proyectos: undefined;
+  NewProyScreen: undefined;
+  Perfil: undefined;
 }
 
 
