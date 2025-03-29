@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     logoText: {
         color: 'white',
         textAlign: 'center',
-        fontSize: 20,
+        fontSize: 30,
         marginTop: 10,
         fontWeight: 'bold',
         fontFamily: 'serif',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         width: '80%',
         height: '40%',
         top: '48%',
-        backgroundColor: 'white',
+        backgroundColor: 'white', 
         borderTopLeftRadius: 20,
         borderTopEndRadius: 20,
         borderBottomLeftRadius: 20,
@@ -153,7 +153,9 @@ const styles = StyleSheet.create({
     formTextInput:{
         textAlign: 'auto',
         left: 10,
-        width: '90%',
+        width: '84%',
+        borderBottomColor: 'black',
+        borderBottomWidth: 0.5,
     },
 
     formRegister: {

@@ -38,8 +38,8 @@ export const Perfil = () => {
                 <View style={styles.member}>
                     <TouchableOpacity onPress={() => handlePress(0, 'https://github.com/SantiagoC18')}>
                         <Image
-                        source={require('../../../assets/Administradores/santiago.jpg')}
-                        style={[styles.fotoAdmin, expandedImage === 0 && styles.expanded]}
+                            source={require('../../../assets/Administradores/santiago.jpg')}
+                            style={[styles.fotoAdmin, expandedImage === 0 && styles.expanded]}
                         />
                     </TouchableOpacity>
                     <Text style={styles.nombre}>Santiago Cárdenas Hernández</Text>
@@ -47,10 +47,10 @@ export const Perfil = () => {
                 </View>
 
                 <View style={styles.member}>
-                    <TouchableOpacity onPress={() => handlePress(1,'https://github.com/majoromero2006')}>
+                    <TouchableOpacity onPress={() => handlePress(1, 'https://github.com/majoromero2006')}>
                         <Image
-                        source={require('../../../assets/Administradores/majo.jpeg')}
-                        style={[styles.fotoAdmin, expandedImage === 1 && styles.expanded]}
+                            source={require('../../../assets/Administradores/majo.jpeg')}
+                            style={[styles.fotoAdmin, expandedImage === 1 && styles.expanded]}
                         />
                     </TouchableOpacity>
                     <Text style={styles.nombre}>María José Romero Gómez</Text>
@@ -60,19 +60,20 @@ export const Perfil = () => {
                 <View style={styles.member}>
                     <TouchableOpacity onPress={() => handlePress(2, 'https://github.com/Shiuu28')}>
                         <Image
-                        source={require('../../../assets/Administradores/shiuu.jpg')}
-                        style={[styles.fotoAdmin, expandedImage === 2 && styles.expanded]}
+                            source={require('../../../assets/Administradores/shiuu.jpg')}
+                            style={[styles.fotoAdmin, expandedImage === 2 && styles.expanded]}
                         />
                     </TouchableOpacity>
                     <Text style={styles.nombre}>Shiuu Valenzuela Penagos</Text>
                     <Text style={styles.funcion}>Función</Text>
                 </View>
-               
 
-            <RoundedButton text='CONTACTENOS' onPress={() =>
-                navigation.navigate('Home')}>
-            </RoundedButton>
-        </View>
+                <View style={{marginTop: 42}}>
+                    <RoundedButton text='CONTACTENOS' onPress={() =>
+                        navigation.navigate('HomeScreen')}>
+                    </RoundedButton>
+                </View>
+            </View>
         </View >
     );
 };
@@ -102,6 +103,7 @@ const styles = StyleSheet.create({
         height: '100%',
         position: 'absolute',
         padding: 20,
+        top: 30,
     },
 
     member: {

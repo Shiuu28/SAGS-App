@@ -38,6 +38,7 @@ export const NewProyScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='Ingrese el nombre del proyecto'
+                        placeholderTextColor={'white'}
                         keyboardType='default'
                     />
                 </View>
@@ -50,6 +51,7 @@ export const NewProyScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='Descripción detallada del proyecto'
+                        placeholderTextColor={'white'}
                         keyboardType='default'
                     />
                 </View>
@@ -61,6 +63,7 @@ export const NewProyScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='Aplicativo Web'
+                        placeholderTextColor={'white'}
                         keyboardType='email-address'
                     />
                 </View>
@@ -72,6 +75,7 @@ export const NewProyScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='dd/mm/aa'
+                        placeholderTextColor={'white'}
                         keyboardType='numeric'
                     />
                 </View>
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
     form: {
         width: '100%',
         height: 'auto',
-        backgroundColor: '#146099',
+        backgroundColor: 'rgba(255, 255, 255, 0.14)',
         position: 'absolute',
         borderRadius: 8,
         borderWidth: 1,

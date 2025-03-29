@@ -44,6 +44,7 @@ export const RegisterScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='Tipo de documento'
+                        placeholderTextColor={'white'}
                         keyboardType='default'
                     />
                 </View>
@@ -58,6 +59,7 @@ export const RegisterScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='Documento (solo números)'
+                        placeholderTextColor={'white'}
                         keyboardType='default'
                     />
                 </View>
@@ -71,6 +73,7 @@ export const RegisterScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='Correo electrónico'
+                        placeholderTextColor={'white'}
                         keyboardType='email-address'
                     />
                 </View>
@@ -84,6 +87,7 @@ export const RegisterScreen = () => {
                     <TextInput
                         style={styles.formTextInput}
                         placeholder='Contraseña'
+                        placeholderTextColor={'white'}
                         keyboardType='default'
                         secureTextEntry={true}
                     />
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
     form: {
         width: '100%',
         height: 'auto',
-        backgroundColor: '#146099',
+        backgroundColor: 'rgba(64, 103, 125, 0.8)',
         position: 'absolute',
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
@@ -184,7 +188,7 @@ const styles = StyleSheet.create({
     logoText: {
         color: 'white',
         textAlign: 'center',
-        fontSize: 35,
+        fontSize: 40,
         marginTop: '40%',
         fontWeight: 'bold',
     },
