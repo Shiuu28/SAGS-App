@@ -33,7 +33,7 @@ export const Proyectos = () => {
                     <Text style={styles.gestionText}>Gestión de Proyectos</Text>
                     <Text style={styles.descripcionText}>Utilizamos la métodologia ágil scrum para la gestión de proyectos, donde los equipos trabajan de manera colaborativa para entregar valor de manera iterativa.</Text>
                     <RoundedButton text='INGRESAR' onPress={() =>
-                        navigation.navigate('Perfil')}>
+                        navigation.navigate('Checklist')}>
                     </RoundedButton>
                 </View>
             </View>
@@ -77,6 +77,8 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: 'white',
         textAlign: 'center',
+        fontFamily:'serif',
+        fontWeight: 'bold',
     },
 
     gestionProy: {
@@ -94,6 +96,8 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: 'white',
         textAlign: 'center',
+        fontFamily:'serif',
+        fontWeight: 'bold',
     },
 
     descripcionText: {

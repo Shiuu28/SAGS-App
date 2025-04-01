@@ -17,7 +17,7 @@ export const Nav = ({ onPress }: ImageProps) => {
         { id: "1", label: "Home", action: () => navigation.navigate('HomeScreen')},
         { id: "2", label: "Perfil", action: () => navigation.navigate("PerfilUsu")},        
         { id: "3", label: "Gestión de Proyectos", action: () => navigation.navigate("Proyectos")},
-        { id: "4", label: "Sobre Nosotros", action: () => navigation.navigate("Perfil")}
+        { id: "4", label: "Sobre Nosotros", action: () => navigation.navigate("SobreNosotros")}
     ];
 
 

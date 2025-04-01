@@ -8,7 +8,7 @@ import { Nav } from '../../components/Nav';
 
 
 
-export const Perfil = () => {
+export const SobreNosotros = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [expandedImage, setExpandedImage] = useState<number | null>(null);
 

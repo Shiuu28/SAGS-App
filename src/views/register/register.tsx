@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     form: {
         width: '100%',
         height: 'auto',
-        backgroundColor: 'rgba(64, 103, 125, 0.8)',
+        backgroundColor: 'rgba(60, 121, 157, 0.8)',
         position: 'absolute',
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
+        fontFamily: 'serif',
     },
 
 
@@ -176,6 +177,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         fontWeight: 'bold',
         marginLeft: 10,
+        fontFamily: 'serif',
     },
 
     logoContainer: {
@@ -191,6 +193,7 @@ const styles = StyleSheet.create({
         fontSize: 40,
         marginTop: '40%',
         fontWeight: 'bold',
+        fontFamily: 'serif',
     },
 
 });
