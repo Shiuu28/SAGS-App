@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, FlatList, View, Image, Modal, Text } from
 import { MyColors } from "../theme/AppTheme";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../App";
+import { RootStackParamList } from "../../../App";
 
 interface ImageProps {
     onPress: () => void,
@@ -36,7 +36,7 @@ export const Nav = ({ onPress }: ImageProps) => {
                 setModalVisible(true);
             }}>
                 <Image
-                    source={require('../../assets/menu.png')}
+                    source={require('../../../assets/menu.png')}
                     style={styles.menu}
                 />
             </TouchableOpacity>
@@ -45,7 +45,7 @@ export const Nav = ({ onPress }: ImageProps) => {
                 navigation.navigate('HomeScreen');
             }}>
                 <Image
-                    source={require('../../assets/sirs.jpg')}
+                    source={require('../../../assets/sirs.jpg')}
                     style={styles.logo}
                 />
             </TouchableOpacity>

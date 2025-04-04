@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, Image, ToastAndroid } from 'react-native';
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -13,7 +13,7 @@ export const PerfilUsu = () => {
 
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/background.png')}
+                source={require('../../../../assets/background.png')}
                 style={styles.imageBackground}
             />
 
@@ -25,7 +25,7 @@ export const PerfilUsu = () => {
             <View style={styles.infoUsu}>
                 <Text style={styles.titulo}>Información del Usuario</Text>
                 <Image
-                    source={require('../../../assets/sirs.jpg')}
+                    source={require('../../../../assets/sirs.jpg')}
                     style={styles.FotoPerfil}
                 />
                 <View style={styles.datos}>

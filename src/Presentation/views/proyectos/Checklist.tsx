@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, Image, FlatList, ToastAndroid } from 'react-native';
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Nav } from '../../../src/Presentation/components/Nav';
+import { Nav } from '../../components/Nav';
 import { Checkbox } from 'react-native-paper';
-import { RoundedButton } from '../../Presentation/components/RoundedButton';
+import { RoundedButton } from '../../components/RoundedButton';
 
 
 export const Checklist = () => {
@@ -20,7 +20,7 @@ export const Checklist = () => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/background.png')}
+                source={require('../../../../assets/background.png')}
                 style={styles.imageBackground}
             />
 
@@ -57,7 +57,6 @@ export const Checklist = () => {
                                 ToastAndroid.show('¡Datos Editados!', ToastAndroid.SHORT)}
                                 style={styles.smallButton}
                                 textStyle={styles.buttonText}>
-
                             </RoundedButton>
                             <Text style={styles.text}>{item.date}</Text>
                         </View>
@@ -69,8 +68,8 @@ export const Checklist = () => {
             <View style={styles.view}>
                 <Text style={styles.titulo}>Selecciona un documento para visualizar</Text>
                 <Image
-                    source={require('../../../assets/sirs.jpg')}
-                    style={styles.documento}
+                source={require('../../../../assets/sirs.jpg')}
+                style={styles.documento}
                 />
             </View>
 
@@ -111,17 +110,17 @@ const styles = StyleSheet.create({
 
     listItem: {
         backgroundColor: 'white',
-        padding: 6,
+        padding: 6, 
         marginVertical: 5,
         borderRadius: 5,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
         top: 12,
     },
 
     text: {
-        color: 'black',
+        color: 'black', 
         fontSize: 12,
     },
 
@@ -131,9 +130,9 @@ const styles = StyleSheet.create({
         paddingVertical: 40,
         top: '17%',
         position: 'absolute',
-        width: '95%',
-        height: '35%',
-        alignSelf: 'center',
+        width: '95%', 
+        height: '35%', 
+        alignSelf: 'center', 
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
@@ -148,8 +147,8 @@ const styles = StyleSheet.create({
     },
 
     buttonText: {
-        fontSize: 9,
-        fontWeight: 'bold',
+        fontSize: 9, 
+        fontWeight: 'bold', 
     },
 
     view: {
@@ -158,21 +157,21 @@ const styles = StyleSheet.create({
         top: '60%',
         position: 'absolute',
         width: '95%',
-        height: '35%',
-        alignSelf: 'center',
+        height: '35%', 
+        alignSelf: 'center', 
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
     },
 
-    titulo: {
+    titulo:{
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
         fontWeight: 'bold',
     },
 
-    documento: {
+    documento:{
         alignSelf: 'center',
         alignItems: 'center',
         width: '50%',

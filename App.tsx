@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { HomeScreen } from './src/views/home/home';
+import { HomeScreen } from './src/Presentation/views/home/home';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RegisterScreen } from './src/views/register/register';
-import { Proyectos } from './src/views/proyectos/Proyectos';
-import { NewProyScreen } from './src/views/proyectos/registrarProyecto';
-import { SobreNosotros } from './src/views/SobreNosotros/SobreNosotros';
-import { PerfilUsu } from './src/views/home/PerfilUsu';
-import { Checklist } from './src/views/proyectos/Checklist';
+import { RegisterScreen } from './src/Presentation/views/register/register';
+import { Proyectos } from './src/Presentation/views/proyectos/Proyectos';
+import { NewProyScreen } from './src/Presentation/views/proyectos/registrarProyecto';
+import { SobreNosotros } from './src/Presentation/views/SobreNosotros/SobreNosotros';
+import { PerfilUsu } from './src/Presentation/views/home/PerfilUsu';
+import { Checklist } from './src/Presentation/views/proyectos/Checklist';
 
 export type RootStackParamList = {
   HomeScreen: undefined;

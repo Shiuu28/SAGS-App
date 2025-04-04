@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, TextInput, ToastAndroid, Touchable, TouchableOpacity } from 'react-native';
-import { RootStackParamList } from '../../../App';
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
+import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -10,19 +10,26 @@ export const HomeScreen = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    useEffect(() => {
+        if (errorMessage !== ''){
+            ToastAndroid.show(errorMessage, ToastAndroid.LONG);
+        }
+    }, [errorMessage]);
 
     return (
 
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/background.png')}
+                source={require('../../../../assets/background.png')}
                 style={styles.imageBackground}
             />
 
             <View style={styles.logoContainer}>
                 <Image
-                    source={require('../../../assets/sirs.jpg')}
+                    source={require('../../../../assets/sirs.jpg')}
                     style={styles.logoImage}
                 />
                 <Text style={styles.logoText}>¡BIENVENIDO A SAGS!</Text>
@@ -32,7 +39,7 @@ export const HomeScreen = () => {
                 <Text style={styles.formText}>Iniciar Sesion</Text>
                 <View style={styles.formInput}>
                     <Image style={styles.formIcon}
-                        source={require('../../../assets/user.png')}
+                        source={require('../../../../assets/user.png')}
                     />
 
                     <TextInput
@@ -46,7 +53,7 @@ export const HomeScreen = () => {
 
                 <View style={styles.formInput}>
                     <Image style={styles.formIcon}
-                        source={require('../../../assets/password.png')}
+                        source={require('../../../../assets/password.png')}
                     />
 
                     <TextInput

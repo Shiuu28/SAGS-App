@@ -3,47 +3,41 @@ import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, TextInput, ToastAndroid, Touchable, TouchableOpacity } from 'react-native';
 import { RoundedButton } from '../../components/RoundedButton'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../../../App';
 import { Nav } from '../../components/Nav';
 
 
 
-export const RegisterScreen = () => {
+export const NewProyScreen = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
 
     return (
 
         <View style={styles.container}>
 
             <Image
-                source={require('../../../assets/background.png')}
+                source={require('../../../../assets/background.png')}
                 style={styles.imageBackground}
             />
 
             <Nav onPress={() =>
-                navigation.navigate('HomeScreen')}>
+                navigation.navigate('Proyectos')}>
             </Nav>
 
             <View style={styles.logoContainer}>
-                <Text style={styles.logoText}>¡BIENVENIDO!</Text>
+                <Text style={styles.logoText}>Registrar Proyecto</Text>
             </View>
 
 
 
             <View style={styles.form}>
 
-                <Text style={styles.formText}>REGISTRARSE</Text>
-
-
                 <View style={styles.formInput}>
-                    <Image style={styles.formIcon}
-                        source={require('../../../assets/avatar.png')}
-                    />
+                    <Text style={styles.formText}>Nombre del Proyecto</Text>
 
                     <TextInput
                         style={styles.formTextInput}
-                        placeholder='Tipo de documento'
+                        placeholder='Ingrese el nombre del proyecto'
                         placeholderTextColor={'white'}
                         keyboardType='default'
                     />
@@ -52,13 +46,11 @@ export const RegisterScreen = () => {
 
 
                 <View style={styles.formInput}>
-                    <Image style={styles.formIcon}
-                        source={require('../../../assets/id.png')}
-                    />
+                <Text style={styles.formText}>Descripción</Text>
 
                     <TextInput
                         style={styles.formTextInput}
-                        placeholder='Documento (solo números)'
+                        placeholder='Descripción detallada del proyecto'
                         placeholderTextColor={'white'}
                         keyboardType='default'
                     />
@@ -66,13 +58,11 @@ export const RegisterScreen = () => {
 
 
                 <View style={styles.formInput}>
-                    <Image style={styles.formIcon}
-                        source={require('../../../assets/correo.png')}
-                    />
+                <Text style={styles.formText}>Tipo de aplicativo</Text>
 
                     <TextInput
                         style={styles.formTextInput}
-                        placeholder='Correo electrónico'
+                        placeholder='Aplicativo Web'
                         placeholderTextColor={'white'}
                         keyboardType='email-address'
                     />
@@ -80,22 +70,19 @@ export const RegisterScreen = () => {
 
 
                 <View style={styles.formInput}>
-                    <Image style={styles.formIcon}
-                        source={require('../../../assets/password.png')}
-                    />
+                <Text style={styles.formText}>Fecha de Registro</Text>
 
                     <TextInput
                         style={styles.formTextInput}
-                        placeholder='Contraseña'
+                        placeholder='dd/mm/aa'
                         placeholderTextColor={'white'}
-                        keyboardType='default'
-                        secureTextEntry={true}
+                        keyboardType='numeric'
                     />
                 </View>
 
 
                 <View style={{ marginTop: 30 }}>
-                    <RoundedButton text='CONFIRMAR' onPress={() => ToastAndroid.show('HOLA!', ToastAndroid.SHORT)} />
+                    <RoundedButton text='Registrar' onPress={() => ToastAndroid.show('¡Su proyecto se ha registrado!', ToastAndroid.LONG)} />
                 </View>
 
 
@@ -121,12 +108,11 @@ const styles = StyleSheet.create({
     form: {
         width: '100%',
         height: 'auto',
-        backgroundColor: 'rgba(60, 121, 157, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.14)',
         position: 'absolute',
-        borderTopLeftRadius: 40,
-        borderTopRightRadius: 40,
-        borderBottomLeftRadius: 40,
-        borderBottomRightRadius: 40,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: 'white',
         padding: 30,
         top: '36%',
         opacity: 0.9,
@@ -134,11 +120,10 @@ const styles = StyleSheet.create({
 
 
     formText: {
+        fontSize: 15,
         fontWeight: 'bold',
-        fontSize: 20,
-        textAlign: 'center',
         color: 'white',
-        fontFamily: 'serif',
+        textAlign: 'left'
     },
 
 
@@ -150,7 +135,6 @@ const styles = StyleSheet.create({
 
 
     formInput: {
-        flexDirection: 'row',
         marginTop: 25,
     },
 
@@ -177,7 +161,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         fontWeight: 'bold',
         marginLeft: 10,
-        fontFamily: 'serif',
     },
 
     logoContainer: {
@@ -190,10 +173,9 @@ const styles = StyleSheet.create({
     logoText: {
         color: 'white',
         textAlign: 'center',
-        fontSize: 40,
+        fontSize: 35,
         marginTop: '40%',
         fontWeight: 'bold',
-        fontFamily: 'serif',
     },
 
 });

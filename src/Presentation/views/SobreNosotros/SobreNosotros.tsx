@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Linking } from 'react-native';
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
@@ -24,7 +24,7 @@ export const SobreNosotros = () => {
 
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/background.png')}
+                source={require('../../../../assets/background.png')}
                 style={styles.imageBackground}
             />
 
@@ -38,7 +38,7 @@ export const SobreNosotros = () => {
                 <View style={styles.member}>
                     <TouchableOpacity onPress={() => handlePress(0, 'https://github.com/SantiagoC18')}>
                         <Image
-                            source={require('../../../assets/Administradores/santiago.jpg')}
+                            source={require('../../../../assets/Administradores/santiago.jpg')}
                             style={[styles.fotoAdmin, expandedImage === 0 && styles.expanded]}
                         />
                     </TouchableOpacity>
@@ -49,7 +49,7 @@ export const SobreNosotros = () => {
                 <View style={styles.member}>
                     <TouchableOpacity onPress={() => handlePress(1, 'https://github.com/majoromero2006')}>
                         <Image
-                            source={require('../../../assets/Administradores/majo.jpeg')}
+                            source={require('../../../../assets/Administradores/majo.jpeg')}
                             style={[styles.fotoAdmin, expandedImage === 1 && styles.expanded]}
                         />
                     </TouchableOpacity>
@@ -60,7 +60,7 @@ export const SobreNosotros = () => {
                 <View style={styles.member}>
                     <TouchableOpacity onPress={() => handlePress(2, 'https://github.com/Shiuu28')}>
                         <Image
-                            source={require('../../../assets/Administradores/shiuu.jpg')}
+                            source={require('../../../../assets/Administradores/shiuu.jpg')}
                             style={[styles.fotoAdmin, expandedImage === 2 && styles.expanded]}
                         />
                     </TouchableOpacity>

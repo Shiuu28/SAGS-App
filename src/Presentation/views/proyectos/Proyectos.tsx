@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
@@ -12,7 +12,7 @@ export const Proyectos = () => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/background.png')}
+                source={require('../../../../assets/background.png')}
                 style={styles.imageBackground}
             />
 
