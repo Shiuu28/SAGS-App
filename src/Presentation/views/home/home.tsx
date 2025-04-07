@@ -4,17 +4,17 @@ import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useHomeViewModel from './viewModel';
+import { CustomTextInput } from '../../components/CustomTextInput';
 
 
 export const HomeScreen = () => {
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const { email, password, errorMessage, onChange, login } = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     useEffect(() => {
-        if (errorMessage !== ''){
+        if (errorMessage !== '') {
             ToastAndroid.show(errorMessage, ToastAndroid.LONG);
         }
     }, [errorMessage]);
@@ -37,40 +37,33 @@ export const HomeScreen = () => {
 
             <View style={styles.form}>
                 <Text style={styles.formText}>Iniciar Sesion</Text>
-                <View style={styles.formInput}>
-                    <Image style={styles.formIcon}
-                        source={require('../../../../assets/user.png')}
-                    />
-
-                    <TextInput
-                        style={styles.formTextInput}
+                
+                    <CustomTextInput
+                        image={require('../../../../assets/user.png')}
                         placeholder='Correo electrónico'
                         keyboardType='email-address'
+                        property='email'
                         value={email}
-                        onChangeText={text => setEmail(text)}
-                    />
-                </View>
-
-                <View style={styles.formInput}>
-                    <Image style={styles.formIcon}
-                        source={require('../../../../assets/password.png')}
+                        onChangeText={onChange}
                     />
 
-                    <TextInput
-                        style={styles.formTextInput}
+               
+
+                    <CustomTextInput
+                        image={require('../../../../assets/password.png')}
                         placeholder='Contraseña'
                         keyboardType='default'
+                        property='password'
                         secureTextEntry={true}
                         value={password}
-                        onChangeText={text => setPassword(text)}
+                        onChangeText={onChange}
                     />
-                </View>
 
 
                 <View style={{ marginTop: 30 }}>
-                    <RoundedButton text='INGRESAR' onPress={() =>
-                        navigation.navigate('Proyectos')}>
-                    </RoundedButton>
+                    <RoundedButton text='INGRESAR' onPress={() => {login();
+                        navigation.navigate('Proyectos');
+                    }} />
                 </View>
 
 
@@ -82,7 +75,7 @@ export const HomeScreen = () => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </View >
     );
 };
 
@@ -127,7 +120,7 @@ const styles = StyleSheet.create({
         width: '80%',
         height: '40%',
         top: '48%',
-        backgroundColor: 'white', 
+        backgroundColor: 'white',
         borderTopLeftRadius: 20,
         borderTopEndRadius: 20,
         borderBottomLeftRadius: 20,
@@ -144,26 +137,7 @@ const styles = StyleSheet.create({
         color: '#146099',
         textAlign: 'center',
         fontFamily: 'serif',
-    },
-
-    formIcon: {
-        width: 25,
-        height: 25,
-        marginTop: 5,
-    },
-
-    formInput: {
-        flexDirection: 'row',
-        marginTop: 30,
-    },
-
-    formTextInput:{
-        textAlign: 'auto',
-        left: 10,
-        width: '84%',
-        borderBottomColor: 'black',
-        borderBottomWidth: 0.5,
-    },
+    },   
 
     formRegister: {
         flexDirection: 'row',

@@ -11,42 +11,32 @@ const useRegisterViewModel = () => {
         password: ''
     });
 
-    const onChange = (key: string, value: string) => {
-        setValues(prevState => ({
-            ...prevState,
-            [key]: value
-        }));
-        console.log(`Campo actualizado: ${key} -> ${value}`);
-    }
+    const onChange = (property: string, value: any) => {
+        setValues({...values, [property]: value});
+    };
 
     const register = async () => {
-        if (!isValidForm()) return;
-        
-        try {
-            console.log('Enviando datos:', values); // Verifica qué se está enviando
+        if (!isValidForm()) {
             const response = await RegisterAuthUseCase(values);
-            console.log('Resultado:', response);
-        } catch (error) {
-            console.error('Error en el registro:', error);
-            setErrorMessage('Error al conectar con el servidor');
+            console.log('Result' + JSON.stringify(response));
         }
     }
 
     const isValidForm = (): boolean => {
        
-        if (values.tipodoc === ' ') {
+        if (values.tipodoc === '') {
             setErrorMessage('El tipo de documento es requerido');
             return false;
         }
-        if (values.documento === ' ') {
+        if (values.documento === '') {
             setErrorMessage('El documento es requerido');
             return false;
         }
-        if (values.email === ' ') {
+        if (values.email === '') {
             setErrorMessage('El correo es requerido');
             return false;
         }
-        if (values.password === ' ') {
+        if (values.password === '') {
             setErrorMessage('La contraseña es requerida');
             return false;
         }
@@ -58,8 +48,9 @@ const useRegisterViewModel = () => {
         ...values,
         onChange,
         register,
-        errorMessage
-    }
-}
+        errorMessage, 
+        setErrorMessage
+    };
+};
 
 export default useRegisterViewModel;
