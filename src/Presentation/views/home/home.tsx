@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
+import React, {useEffect } from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
@@ -46,8 +46,6 @@ export const HomeScreen = () => {
                         value={email}
                         onChangeText={onChange}
                     />
-
-               
 
                     <CustomTextInput
                         image={require('../../../../assets/password.png')}

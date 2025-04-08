@@ -1,13 +1,6 @@
 export interface User {
     email: string;
     tipodoc: string;
-    documento: number; // int en BD
+    documento: string; 
     password: string;  
-    telefono: number;  // bigint en BD
-    nombres: string;
-    apellidos: string;
-    foto: string;
-    idrol: number; // int en BD
-    perfil: string;
-    session_token?: string;
 }

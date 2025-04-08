@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../App';
 import { Nav } from '../../components/Nav';
 import useRegisterViewModel from "../../views/register/viewModel";
+import { CustomTextInput } from '../../components/CustomTextInput';
 
 
 export const RegisterScreen = () => {
@@ -42,64 +43,44 @@ export const RegisterScreen = () => {
                     <Text style={styles.formText}>REGISTRARSE</Text>
 
 
-                    <View style={styles.formInput}>
-                        <Image style={styles.formIcon}
-                            source={require('../../../../assets/avatar.png')}
-                        />
 
-                        <TextInput
-                            style={styles.formTextInput}
+                        <CustomTextInput
+                            image={require('../../../../assets/avatar.png')}
                             placeholder='Tipo de documento'
-                            placeholderTextColor={'white'}
                             keyboardType='default'
-                            onChangeText={(text) => onChange('tipodoc', text)}
-                        />
-                    </View>
-
-
-
-                    <View style={styles.formInput}>
-                        <Image style={styles.formIcon}
-                            source={require('../../../../assets/id.png')}
+                            property='tipodoc'
+                            onChangeText={onChange}
+                            value={tipodoc}
                         />
 
-                        <TextInput
-                            style={styles.formTextInput}
+                        <CustomTextInput
+                            image={require('../../../../assets/id.png')}
                             placeholder='Documento (solo números)'
-                            placeholderTextColor={'white'}
                             keyboardType='default'
+                            property='documento'
+                            onChangeText={onChange}
+                            value={documento}
                             
                         />
-                    </View>
 
-
-                    <View style={styles.formInput}>
-                        <Image style={styles.formIcon}
-                            source={require('../../../../assets/correo.png')}
-                        />
-
-                        <TextInput
-                            style={styles.formTextInput}
+                        <CustomTextInput
+                            image={require('../../../../assets/correo.png')}
                             placeholder='Correo electrónico'
-                            placeholderTextColor={'white'}
                             keyboardType='email-address'
-                        />
-                    </View>
-
-
-                    <View style={styles.formInput}>
-                        <Image style={styles.formIcon}
-                            source={require('../../../../assets/password.png')}
+                            property='email'
+                            onChangeText={onChange}
+                            value={email}
                         />
 
-                        <TextInput
-                            style={styles.formTextInput}
+                        <CustomTextInput
+                            image={require('../../../../assets/password.png')}
                             placeholder='Contraseña'
-                            placeholderTextColor={'white'}
                             keyboardType='default'
                             secureTextEntry={true}
+                            property='password'
+                            onChangeText={onChange}
+                            value={password}
                         />
-                    </View>
 
 
                     <View style={{ marginTop: 30 }}>

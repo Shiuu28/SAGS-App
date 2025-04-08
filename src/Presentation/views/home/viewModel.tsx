@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LoginAuthUseCase } from '../../../Domain/useCases/auth/Login.Auth';
 import { SaveUserLocalUseCase } from '../../../Domain/useCases/userLocal/SaveUserLocal';
 import { useUserLocal } from '../../hooks/useUserLocal';
