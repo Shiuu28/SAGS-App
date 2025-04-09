@@ -1,10 +1,11 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, ToastAndroid } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
 import { Nav } from '../../components/Nav';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export const Proyectos = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -20,33 +21,82 @@ export const Proyectos = () => {
                 navigation.navigate('HomeScreen')}>
             </Nav>
 
-            <View style={styles.proyectos}>
-                <View style={styles.registroProy}>
-                    <Text style={styles.registerText}>Registro de Proyectos</Text>
-                    <Text style={styles.descripcionText}>El formulario de registro de proyecto recopila datos clave como nombre, descripción, objetivo, plazos y recursos, asegurando una gestión eficiente y bien estructurada desde el inicio.</Text>
-                    <RoundedButton text='REGISTRAR' onPress={() =>
-                        navigation.navigate('NewProyScreen')}>
-                    </RoundedButton>
-                </View>
 
-                <View style={styles.gestionProy}>
-                    <Text style={styles.gestionText}>Gestión de Proyectos</Text>
-                    <Text style={styles.descripcionText}>Utilizamos la métodologia ágil scrum para la gestión de proyectos, donde los equipos trabajan de manera colaborativa para entregar valor de manera iterativa.</Text>
-                    <RoundedButton text='INGRESAR' onPress={() =>
-                        navigation.navigate('Checklist')}>
-                    </RoundedButton>
-                </View>
+            <View style={styles.cardsContainer}>
+                <ScrollView>
+                    {/* Project Registration Card */}
+                    <View style={styles.card}>
+                        <Text style={styles.cardTitle}>Registro de Proyecto</Text>
+                        <Text style={styles.cardDescription}>
+                            El formulario de registro de proyecto permite a los usuarios ingresar detalles específicos sobre nuevos proyectos. A través de este formulario, se recopilan datos esenciales como el nombre del proyecto, la descripción, el objetivo, los plazos y los recursos necesarios. Esta información es fundamental para gestionar y desarrollar proyectos de software de manera eficiente, asegurando que todos los requisitos y expectativas sean claramente definidos desde el inicio.
+                        </Text>
+                        <RoundedButton text='Registrar' onPress={() => {
+                        navigation.navigate('NewProyScreen')}}>
+                        </RoundedButton>
+                    </View>
+
+                    {/* Project Management Card */}
+                    <View style={styles.card}>
+                        <Text style={styles.cardTitle}>Gestión de Proyectos</Text>
+                        <Text style={styles.cardSubtitle}>
+                            Conoce el método de gestión de proyectos y los privilegios de los usuarios.
+                        </Text>
+
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Método de Gestión</Text>
+                            <Text style={styles.sectionText}>
+                                Utilizamos la métodologia ágil scrum para la gestión de proyectos, donde los equipos trabajan de manera colaborativa para entregar valor de manera iterativa.
+                            </Text>
+                        </View>
+
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Privilegios de Usuarios</Text>
+
+                            <View style={styles.privilegeItem}>
+                                <Icon name="user" size={20} color="#fff" />
+                                <View style={styles.privilegeContent}>
+                                    <Text style={styles.privilegeTitle}>Miembro del Equipo</Text>
+                                    <Text style={styles.privilegeDescription}>
+                                        Puede ver y comentar en el proyecto.
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.privilegeItem}>
+                                <Icon name="users" size={20} color="#fff" />
+                                <View style={styles.privilegeContent}>
+                                    <Text style={styles.privilegeTitle}>Gestor de Proyecto</Text>
+                                    <Text style={styles.privilegeDescription}>
+                                        Puede ver, comentar y editar el proyecto.
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.privilegeItem}>
+                                <Icon name="lock" size={20} color="#fff" />
+                                <View style={styles.privilegeContent}>
+                                    <Text style={styles.privilegeTitle}>Administrador</Text>
+                                    <Text style={styles.privilegeDescription}>
+                                        Tiene acceso de administrador a todos los recursos.
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <RoundedButton text='Ingresar' onPress={() => {
+                        navigation.navigate('Checklist')}}>
+                        </RoundedButton>
+                    </View>
+                </ScrollView>
             </View>
-        </View>
-    )
+        </View >
+    );
 };
 
-
 const styles = StyleSheet.create({
-
     container: {
         flex: 1,
-        backgroundColor: 'black',
+        backgroundColor: '#000A11',
     },
 
     imageBackground: {
@@ -54,58 +104,78 @@ const styles = StyleSheet.create({
         height: '110%',
     },
 
-    proyectos: {
-        margin: 'auto',
+    cardsContainer: {
+        padding: 16,
+        gap: 16,
         position: 'absolute',
-        width: '100%',
-        height: '100%',
-        top: 54,
+        height: '90%',
+        alignSelf: 'center',
+        top: '12%',
     },
 
-    registroProy: {
-        width: '84%',
-        height: '30%',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        margin: 'auto',
-        padding: 20,
-        borderColor: 'white',
-        borderWidth: 1,
+    card: {
+        backgroundColor: 'rgba(0, 10, 17, 0.9)',
         borderRadius: 8,
+        padding: 16,
+        marginBottom: 16,
+        borderColor: 'rgba(255, 255, 255, 0.7)',
+        borderWidth: 2,
     },
 
-    registerText: {
-        fontSize: 25,
-        color: 'white',
-        textAlign: 'center',
-        fontFamily:'serif',
-        fontWeight: 'bold',
+    cardTitle: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 8,
     },
 
-    gestionProy: {
-        width: '84%',
-        height: '30%',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        margin: 'auto',
-        padding: 20,
-        borderColor: 'white',
-        borderWidth: 1,
-        borderRadius: 8,
+    cardDescription: {
+        fontSize: 14,
+        color: 'rgba(255, 255, 255, 0.7)',
+        marginBottom: 16,
     },
 
-    gestionText: {
-        fontSize: 25,
-        color: 'white',
-        textAlign: 'center',
-        fontFamily:'serif',
-        fontWeight: 'bold',
+    cardSubtitle: {
+        fontSize: 14,
+        color: 'rgba(255, 255, 255, 0.7)',
+        marginBottom: 24,
     },
 
-    descripcionText: {
-        color: 'white',
-        textAlign: 'justify',
-        fontSize: 15,
-        margin: 'auto',
-        padding: 8,
-    }
+    section: {
+        marginBottom: 24,
+    },
 
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 8,
+    },
+
+    sectionText: {
+        fontSize: 14,
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+
+    privilegeItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+        gap: 12,
+    },
+
+    privilegeContent: {
+        flex: 1,
+    },
+
+    privilegeTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#fff',
+    },
+
+    privilegeDescription: {
+        fontSize: 14,
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
 });

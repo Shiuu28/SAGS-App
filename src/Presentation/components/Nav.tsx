@@ -78,22 +78,24 @@ export const Nav = ({ onPress }: ImageProps) => {
 const styles = StyleSheet.create({
 
     Nav: {
-        backgroundColor: MyColors.primary,
+        backgroundColor: MyColors.background,
         width: '100%',
         height: '12%',
         position: 'absolute',
         top: 0,
-        padding: 30,
+        padding: 28,
         flexDirection: 'row',
     },
 
     menu: {
-        width: 25,
-        height: 25,
+        width: 33,
+        height: 33,
         resizeMode: 'contain',
         margin: 'auto',
         left: 315,
         top: 26,
+        backgroundColor: 'white',
+        borderRadius: 30,
     },
 
     logo: {

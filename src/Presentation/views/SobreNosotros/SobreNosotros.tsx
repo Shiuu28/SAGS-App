@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
 import { Nav } from '../../components/Nav';
+import { SocialLinks } from '../../components/SocialLinks';
 
 
 
@@ -68,10 +69,8 @@ export const SobreNosotros = () => {
                     <Text style={styles.funcion}>Función</Text>
                 </View>
 
-                <View style={{marginTop: 42}}>
-                    <RoundedButton text='CONTACTENOS' onPress={() =>
-                        navigation.navigate('HomeScreen')}>
-                    </RoundedButton>
+                <View style={{ marginTop: 40 }}>
+                    <SocialLinks />
                 </View>
             </View>
         </View >
