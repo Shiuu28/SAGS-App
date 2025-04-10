@@ -89,13 +89,11 @@ const styles = StyleSheet.create({
 
     menu: {
         width: 33,
-        height: 33,
+        height: 30,
         resizeMode: 'contain',
         margin: 'auto',
         left: 315,
         top: 26,
-        backgroundColor: 'white',
-        borderRadius: 30,
     },
 
     logo: {

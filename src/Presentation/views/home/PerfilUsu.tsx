@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
@@ -8,9 +8,10 @@ import Nav from '../../components/Nav';
 
 export const PerfilUsu = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const [isEditProfileVisible, setEditProfileVisible] = React.useState(false);
+    const [isChangePasswordVisible, setChangePasswordVisible] = React.useState(false);
 
     return (
-
         <View style={styles.container}>
             <Image
                 source={require('../../../../assets/background.png')}
@@ -22,49 +23,58 @@ export const PerfilUsu = () => {
 
             </Nav>
 
-            <View style={styles.infoUsu}>
-                <Text style={styles.titulo}>Información del Usuario</Text>
-                <Image
-                    source={require('../../../../assets/sirs.jpg')}
-                    style={styles.FotoPerfil}
-                />
-                <View style={styles.datos}>
-                    <Text style={styles.personal}>Nombre:</Text>
-                    <Text style={styles.personal}>Correo Electrónico:</Text>
-                    <Text style={styles.personal}>Función:</Text>
+            {/* User Info Section */}
+            <View style={styles.Info}>
+                <View style={styles.userInfo}>
+                    <Text style={styles.sectionTitle}>Información del Usuario</Text>
+                    <View style={styles.userDetails}>
+                        <Image
+                            source={require('../../../../assets/sirs.jpg')}
+                            style={styles.profileImage}
+                        />
+                        <View style={styles.userText}>
+                            <Text style={styles.userDataText}>
+                                <Text style={styles.bold}>Nombre: </Text>
+                            </Text>
+                            <Text style={styles.userDataText}>
+                                <Text style={styles.bold}>Correo Electrónico: </Text>
+                            </Text>
+                            <Text style={styles.userDataText}>
+                                <Text style={styles.bold}>Funcion: </Text>
+                            </Text>
+                            <View style={styles.buttons}>
+                                <RoundedButton text='Editar Datos' onPress={() => {
+                                    navigation.navigate('PerfilUsu')
+                                }}>
+                                </RoundedButton>
+
+                                <RoundedButton text='Editar Clave' onPress={() => {
+                                    navigation.navigate('PerfilUsu')
+                                }}>
+                                </RoundedButton>
+                            </View>
+                        </View>
+                    </View>
                 </View>
 
-                <View style={{ marginTop: 150, flexDirection: 'row', gap: 12}}>
-                    <RoundedButton text='Editar Datos' onPress={() =>
-                        ToastAndroid.show('¡Datos Editados!', ToastAndroid.SHORT)}
-                        style={styles.smallButton}>
-                    </RoundedButton>
-
-                    <RoundedButton text='Editar Datos' onPress={() =>
-                        ToastAndroid.show('¡Contraseña Editada!', ToastAndroid.SHORT)}
-                        style={styles.smallButton}>
-                    </RoundedButton>
+                <View style={styles.projectsSection}>
+                    <View style={styles.addProject}>
+                        <Text style={styles.sectionTitle}>Proyectos del Usuario</Text>
+                        <Image source={require('../../../../assets/mas.png')}
+                            style={styles.add} />
+                    </View>
+                    <View style={styles.projectCard}>
+                        <Text style={styles.projectTitle}>Proyecto: </Text>
+                        <Text style={styles.projectDesc}>Descripción: </Text>
+                        <Text style={styles.projectStatus}>Estado: </Text>
+                    </View>
                 </View>
             </View>
-
-            <View style={styles.datosProy}>
-                <Text style={styles.titulo}>Proyecto del Usuario</Text>
-                <Text style={styles.proy}>Proyecto:</Text>
-                <Text style={styles.descripcion}>Descripción:</Text>
-
-                <View style={{ marginTop: 180 }}>
-                    <RoundedButton text='VER' onPress={() =>
-                        ToastAndroid.show('Proyecto Visualizado', ToastAndroid.SHORT)}>
-                    </RoundedButton>
-                </View>
-            </View>
-
-        </View >
+        </View>
     )
 };
 
 const styles = StyleSheet.create({
-
     container: {
         flex: 1,
         backgroundColor: 'black',
@@ -75,96 +85,116 @@ const styles = StyleSheet.create({
         height: '110%',
     },
 
-    infoUsu: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        width: '80%',
-        height: '30%',
+    Info: {
         position: 'absolute',
-        top: '23%',
-        left: '10%',
-        display: 'flex',
-        borderColor: 'white',
-        borderWidth: 2,
+        top: '20%',
+        alignSelf: 'center',
     },
 
-    titulo: {
-        color: 'white',
-        fontSize: 20,
-        textAlign: 'center',
+    userInfo: {
+        padding: 20,
+        borderWidth: 2,
+        borderColor: 'rgba(255, 255, 255, 0.7)',
+        borderRadius: 5,
+        height: '60%',
+        backgroundColor:  'rgba(0, 10, 17, 0.9)',
+    },
+
+    sectionTitle: {
+        fontSize: 24,
         fontWeight: 'bold',
-        borderColor: 'white',
-        borderWidth: 2,
-        width: '100%',
-        height: 40,
-        position: 'absolute',
-        top: 0,
+        marginBottom: 20,
+        color: 'rgba(255, 255, 255, 0.7)',
+        borderBottomColor: 'rgba(255, 255, 255, 0.7)',
+        borderBottomWidth: 1,
+        textAlign: 'center',
     },
 
-    FotoPerfil: {
-        borderRadius: 100,
-        borderColor: 'white',
-        borderWidth: 2,
-        backgroundColor: 'white',
+    userDetails: {
+        top: 5,
+        alignItems: 'center',
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+
+    buttons: {
+        marginTop: 10,
+        gap: 10,
+        flexDirection: 'row',
+        width: '45%',
+        height: '10%',
+    },
+
+    profileImage: {
         width: 100,
         height: 100,
-        position: 'absolute',
-        left: 14,
-        top: 55,
-    },
-
-    datos: {
-        fontSize: 15,
-        position: 'absolute',
-        top: '29%',
-        left: '40%',
-        marginBottom: 5,
-    },
-    
-    personal:{
-        color: 'white',
-        fontWeight: 'bold',
-    },
-
-    smallButton: {
-        width: '42%',
-        height: 50,
-        marginBottom: '6%',   
-        top: '65%',
-        margin: 'auto',
-    },
-
-    datosProy: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        width: '80%',
-        height: '30%',
-        position: 'absolute',
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.7)',
+        marginRight: 20,
         justifyContent: 'center',
-        alignContent: 'center',
-        top: '60%',
-        left: '10%',
-        display: 'flex',
-        borderColor: 'white',
+        alignSelf: 'center',
+    },
+
+    userText: {
+        flex: 1,
+        color: 'rgba(255, 255, 255, 0.7)'
+    },
+
+    userDataText: {
+        fontSize: 16,
+        marginBottom: 10,
+        color: 'rgba(255, 255, 255, 0.7)',
+        top: 10,
+    },
+
+    bold: {
+        fontWeight: 'bold',
+    },
+
+    projectsSection: {
+        padding: 20,
         borderWidth: 2,
+        borderColor: 'rgba(255, 255, 255, 0.7)',
+        borderRadius: 5,
+        top: 20,
+        backgroundColor:  'rgba(0, 10, 17, 0.9)',
     },
 
-    proy: {
-        color: 'white',
-        fontSize: 15,
-        fontFamily: 'serif',
-        position: 'absolute',
-        top: '33%',
-        left: 20,
+    projectCard: {
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+    },
+
+    projectTitle: {
+        fontSize: 18,
         fontWeight: 'bold',
-
+        marginBottom: 10,
+        color: 'rgba(255, 255, 255, 0.7)'
     },
 
-    descripcion: {
-        color: 'white',
-        fontSize: 15,
-        fontFamily: 'serif',
+    projectDesc: {
+        fontSize: 16,
+        marginBottom: 5,
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+
+    projectStatus: {
+        fontSize: 16,
+        marginBottom: 10,
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+
+    addProject:{
+        display: 'flex',
+    },
+
+    add:{
         position: 'absolute',
-        top: '50%',
-        left: 20,
-        fontWeight: 'bold',
+        left: '92%',
+        width: 30,
+        height: 30,
     },
+
 });
+
