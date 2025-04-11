@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
         position: 'absolute',
-        top: '20%',
+        top: '22%',
         alignSelf: 'center',
         borderColor: 'rgba(255, 255, 255, 0.7)',
         borderWidth: 1,
