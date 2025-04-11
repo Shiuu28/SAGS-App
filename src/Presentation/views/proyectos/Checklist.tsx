@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, FlatList, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Nav } from '../../components/Nav';
 import { Checkbox } from 'react-native-paper';
 import { RoundedButton } from '../../components/RoundedButton';
+import { WebView } from 'react-native-webview';
+import { MyColors } from '../../theme/AppTheme';
 
 
 export const Checklist = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const [checked, setChecked] = useState(false);
-    const rows = [
-        { id: 1, name: "Casos de Uso", progress: "70%", date: "07/07/2023" },
-        { id: 2, name: "Casos de Uso", progress: "70%", date: "07/07/2023" },
-    ];
 
+    const [selectedDocument, setSelectedDocument] = useState<{
+        title: string;
+        path: string;
+    } | null>(null);
 
     return (
         <View style={styles.container}>
@@ -28,60 +29,68 @@ export const Checklist = () => {
                 navigation.navigate('HomeScreen')}>
             </Nav>
 
+            <Text style={styles.title}>Checklist de Documentación</Text>
 
+            <ScrollView horizontal style={styles.check}>
+                <View style={styles.tableContainer}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerCell}>Check</Text>
+                        <Text style={styles.headerCell}>Documentation</Text>
+                        <Text style={styles.headerCell}>Description</Text>
+                        <Text style={styles.headerCell}>Progress</Text>
+                        <Text style={styles.headerCell}>File</Text>
+                        <Text style={styles.headerCell}>Date</Text>
+                    </View>
 
-            <View style={styles.overlay}>
-
-                {/*Encabezados*/}
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Check</Text>
-                    <Text style={styles.headerText}>Documentación</Text>
-                    <Text style={styles.headerText}>Progreso</Text>
-                    <Text style={styles.headerText}>Archivo</Text>
-                    <Text style={styles.headerText}>Fecha</Text>
-                </View>
-
-                {/*Estructura - Elementos*/}
-                <FlatList
-                    data={rows}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.listItem}>
-                            <Checkbox status={checked ? "checked" : "unchecked"}
-                                onPress={() => setChecked(!checked)} />
-
-                            <Text style={styles.text}>{item.name} Modelo</Text>
-                            <Text style={styles.text}>{item.progress}</Text>
-
-                            <RoundedButton text='Ver' onPress={() =>
-                                ToastAndroid.show('¡Datos Editados!', ToastAndroid.SHORT)}
-                                style={styles.smallButton}
-                                textStyle={styles.buttonText}>
-                            </RoundedButton>
-                            <Text style={styles.text}>{item.date}</Text>
+                    {/* Example of a table row - this would be repeated for each data item */}
+                    <View style={styles.row}>
+                        <View style={styles.cell}>
+                            <TouchableOpacity style={styles.checkbox}>
+                                {/* Checkbox indicator */}
+                                <View style={styles.checkboxInner} />
+                            </TouchableOpacity>
                         </View>
-                    )}
-                />
+                        <Text style={styles.cell}>Document Name</Text>
+                        <Text style={styles.cell}>Document Description</Text>
+                        <View style={styles.cell}>
+                            <View style={styles.progressContainer}>
+                                <Text style={styles.progressText}>75%</Text>
+                                <View style={styles.progressBar}>
+                                    <View style={[styles.progressFill, { width: '75%' }]} />
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.cell}>
+                            <TouchableOpacity style={styles.button}>
+                                <Text style={styles.buttonText}>Ver</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <Text style={styles.cell}>2024-01-20</Text>
+                    </View>
+                </View>
+            </ScrollView>
+
+            <View style={styles.previewContainer}>
+                <Text style={styles.previewTitle}>
+                    {selectedDocument
+                        ? `Vista: ${selectedDocument.title}`
+                        : 'Selecciona un documento para visualizar'}
+                </Text>
+                {selectedDocument && (
+                    <WebView
+                        source={{ uri: selectedDocument.path }}
+                        style={styles.webview}
+                    />
+                )}
             </View>
-
-
-            <View style={styles.view}>
-                <Text style={styles.titulo}>Selecciona un documento para visualizar</Text>
-                <Image
-                source={require('../../../../assets/sirs.jpg')}
-                style={styles.documento}
-                />
-            </View>
-
         </View>
-    )
-
+    );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'black',
+        backgroundColor: '#000A11',
     },
 
     imageBackground: {
@@ -89,96 +98,133 @@ const styles = StyleSheet.create({
         height: '110%',
     },
 
-    header: {
-        flexDirection: "row",
-        paddingVertical: 1,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+    title:{
+        color: 'rgba(255, 255, 255, 0.7)',
         position: 'absolute',
         alignSelf: 'center',
-        alignItems: 'center',
-        top: '2%',
-    },
-
-    headerText: {
-        fontWeight: "bold",
-        flex: 1,
-        textAlign: "center",
-        color: 'white',
-        fontSize: 14,
-    },
-
-    listItem: {
-        backgroundColor: 'white',
-        padding: 6, 
-        marginVertical: 5,
-        borderRadius: 5,
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        top: 12,
-    },
-
-    text: {
-        color: 'black', 
-        fontSize: 12,
-    },
-
-    overlay: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        paddingHorizontal: 12,
-        paddingVertical: 40,
-        top: '17%',
-        position: 'absolute',
-        width: '95%', 
-        height: '35%', 
-        alignSelf: 'center', 
-        borderWidth: 1,
-        borderColor: 'white',
-        borderRadius: 10,
-    },
-
-    smallButton: {
-        width: '12%',
-        height: '40%',
-        marginBottom: '6%',
-        alignSelf: 'center',
-        top: 10,
-    },
-
-    buttonText: {
-        fontSize: 9, 
-        fontWeight: 'bold', 
-    },
-
-    view: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        padding: 12,
-        top: '60%',
-        position: 'absolute',
-        width: '95%',
-        height: '35%', 
-        alignSelf: 'center', 
-        borderWidth: 1,
-        borderColor: 'white',
-        borderRadius: 10,
-    },
-
-    titulo:{
-        fontSize: 20,
-        textAlign: 'center',
-        color: 'white',
+        top: '13%',
+        fontSize: 28,
         fontWeight: 'bold',
     },
 
-    documento:{
-        alignSelf: 'center',
-        alignItems: 'center',
-        width: '50%',
+    check: {
+        position: 'absolute',
         height: '50%',
-        top: '12%',
+        width: '90%',
+        top: '17%',
+        alignSelf: 'center',
+    },
+
+    tableContainer: {
+        borderRadius: 8,
+        padding: 10,
+    },
+
+    headerRow: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderColor: '#e2e8f0',
+        paddingVertical: 10,
+    },
+
+    headerCell: {
+        fontWeight: 'bold',
+        padding: 10,
+        minWidth: 100,
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+
+    row: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderColor: '#e2e8f0',
+        alignItems: 'center',
+    },
+
+    cell: {
+        padding: 10,
+        minWidth: 100,
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderWidth: 2,
+        borderColor: '#3b82f6',
+        borderRadius: 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    checkboxInner: {
+        width: 12,
+        height: 12,
+        backgroundColor: '#3b82f6',
+        borderRadius: 2,
+    },
+
+    progressContainer: {
+        width: '100%',
+    },
+
+    progressText: {
+        color: MyColors.primary,
+        marginBottom: 4,
+    },
+
+    progressBar: {
+        height: 8,
+        backgroundColor: '#e2e8f0',
+        borderRadius: 4,
+        overflow: 'hidden',
+    },
+
+    progressFill: {
+        height: '100%',
+        backgroundColor: '#3b82f6',
+        borderRadius: 4,
+    },
+
+    button: {
+        backgroundColor: '#3b82f6',
+        padding: 8,
+        borderRadius: 6,
+        marginVertical: 2,
+    },
+
+    buttonText: {
+        color: '#ffffff',
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
+
+    previewContainer: {
+        flex: 1,
+        padding: 15,
+        backgroundColor: 'rgba(0, 10, 17, 0.9)',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.7)',
+        position: 'absolute',
+        top: '50%',
+        alignSelf: 'center',
+        borderRadius: 5,
+        height: '48%',
+        width: '90%',
+    },
+
+    previewTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: 'rgba(255, 255, 255, 0.7)',
+        textAlign: 'center',
+    },
+
+    webview: {
+        flex: 1,
+        backgroundColor: '#f9fafb',
     },
 
 });
 
-export default Checklist;

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
