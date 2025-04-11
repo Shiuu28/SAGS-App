@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -10,6 +10,16 @@ import { RoundedButton } from '../../components/RoundedButton';
 
 export const NewProyScreen = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    
+    const [date, setDate] = useState(new Date());
+    const [showDataPicker, setShowDataPicker] =useState(false);
+
+    const onChangeDate = (event: any, selectedDate?: Date) => {
+        if (event.type === 'set' && selectedDate){
+            setDate(selectedDate);
+        }
+        setShowDataPicker(false);
+    };
 
     return (
         <View style={styles.container}>
@@ -63,9 +73,16 @@ export const NewProyScreen = () => {
 
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Fecha de Registro</Text>
-                            <TouchableOpacity style={styles.dateButton}>
-                                <Text style={styles.dateButtonText}>Seleccionar Fecha</Text>
+                            <TouchableOpacity style={styles.dateButton}
+                            onPress={()=> setShowDataPicker(true)}>
+                                <Text style={styles.dateButtonText}>{date.toLocaleDateString()}</Text>
                             </TouchableOpacity>
+                            {showDataPicker && (<DateTimePicker
+                                value= {date}
+                                mode='date'
+                                display='default'
+                                onChange={onChangeDate}/>
+                            )}
                         </View>
 
                         <RoundedButton text='Registrar' onPress={() => {

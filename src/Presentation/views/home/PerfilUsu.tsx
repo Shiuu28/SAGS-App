@@ -54,6 +54,10 @@ export const PerfilUsu = () => {
                                 </RoundedButton>
                             </View>
                         </View>
+                        <TouchableOpacity onPress={() =>
+                            navigation.navigate('PerfilUsu')}>
+                            <Text style={styles.deleteUserText}>Eliminar Usuario</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -96,8 +100,8 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.7)',
         borderRadius: 5,
-        height: '60%',
-        backgroundColor:  'rgba(0, 10, 17, 0.9)',
+        height: '62%',
+        backgroundColor: 'rgba(0, 10, 17, 0.9)',
     },
 
     sectionTitle: {
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(255, 255, 255, 0.7)',
         borderRadius: 5,
         top: 20,
-        backgroundColor:  'rgba(0, 10, 17, 0.9)',
+        backgroundColor: 'rgba(0, 10, 17, 0.9)',
     },
 
     projectCard: {
@@ -185,15 +189,26 @@ const styles = StyleSheet.create({
         color: 'rgba(255, 255, 255, 0.7)',
     },
 
-    addProject:{
+    addProject: {
         display: 'flex',
     },
 
-    add:{
+    add: {
         position: 'absolute',
         left: '92%',
         width: 30,
         height: 30,
+    },
+
+    deleteUserText: {
+        fontStyle: 'italic',
+        color: 'red',
+        borderBottomWidth: 1,
+        borderBottomColor: 'red',
+        fontWeight: 'bold',
+        marginLeft: 10,
+        fontFamily: 'serif',
+        top: 12,
     },
 
 });
