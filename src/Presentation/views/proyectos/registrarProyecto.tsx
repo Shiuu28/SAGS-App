@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet, Platform } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet, ToastAndroid } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Nav from '../../components/Nav';
@@ -7,19 +7,31 @@ import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
+import { RegisterProyEntities } from '../../../Domain/Entities/User'; 
+import useRegisterProyViewModel from './registerViewModel';
 
 export const NewProyScreen = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    
+    const { nombre, descripcion, tipo, fechaI, onChange, errorMessage, RegisterProy } = useRegisterProyViewModel();
+
+
     const [date, setDate] = useState(new Date());
     const [showDataPicker, setShowDataPicker] =useState(false);
 
     const onChangeDate = (event: any, selectedDate?: Date) => {
         if (event.type === 'set' && selectedDate){
             setDate(selectedDate);
+            onChange('fechaI', selectedDate.toISOString().split('T')[0]);
         }
         setShowDataPicker(false);
     };
+
+
+    useEffect(() => {
+            if (errorMessage !== '')
+                ToastAndroid.show(errorMessage, ToastAndroid.LONG)
+        }, [errorMessage]
+    );
 
     return (
         <View style={styles.container}>
@@ -44,6 +56,8 @@ export const NewProyScreen = () => {
                                 style={styles.input}
                                 placeholder="Ingrese el nombre del proyecto"
                                 placeholderTextColor="#666"
+                                value={nombre}
+                                onChangeText={(text) => onChange('nombre', text)}
                             />
                         </View>
 
@@ -55,6 +69,8 @@ export const NewProyScreen = () => {
                                 placeholderTextColor="#666"
                                 multiline
                                 numberOfLines={4}
+                                value={descripcion}
+                                onChangeText={(text) => onChange('descripcion', text)}
                             />
                         </View>
 
@@ -64,9 +80,11 @@ export const NewProyScreen = () => {
                                 <Picker
                                     style={styles.picker}
                                     dropdownIconColor="#fff"
+                                    selectedValue={tipo}
+                                    onValueChange={(itemValue) => onChange('tipo', itemValue)}
                                 >
                                     <Picker.Item label="Seleccione el tipo de aplicativo" value="" />
-                                    <Picker.Item label="Aplicativo Web" value="web" />
+                                    <Picker.Item label="Aplicativo Web" value="Aplicativo web" />
                                 </Picker>
                             </View>
                         </View>
@@ -85,10 +103,7 @@ export const NewProyScreen = () => {
                             )}
                         </View>
 
-                        <RoundedButton text='Registrar' onPress={() => {
-                            navigation.navigate('NewProyScreen')
-                        }}>
-                        </RoundedButton>
+                        <RoundedButton text='Registrar' onPress={() => RegisterProy()}/>
                     </View>
                 </ScrollView>
             </View>

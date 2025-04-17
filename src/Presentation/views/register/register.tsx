@@ -7,6 +7,7 @@ import { RootStackParamList } from '../../../../App';
 import { Nav } from '../../components/Nav';
 import useRegisterViewModel from "../../views/register/viewModel";
 import { CustomTextInput } from '../../components/CustomTextInput';
+import { MyColors } from '../../theme/AppTheme';
 
 
 export const RegisterScreen = () => {
@@ -108,9 +109,9 @@ const styles = StyleSheet.create({
 
 
     form: {
-        width: '100%',
+        width: '95%',
         height: 'auto',
-        backgroundColor: 'rgba(60, 121, 157, 0.8)',
+        backgroundColor: 'white',
         position: 'absolute',
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
@@ -119,6 +120,9 @@ const styles = StyleSheet.create({
         padding: 30,
         top: '36%',
         opacity: 0.9,
+        borderColor: 'rgb(49, 137, 197)',
+        borderWidth: 4,
+        alignSelf: 'center',
     },
 
 
@@ -126,7 +130,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         textAlign: 'center',
-        color: 'white',
+        color: '#146099',
         fontFamily: 'serif',
     },
 

@@ -127,6 +127,8 @@ const styles = StyleSheet.create({
         padding: 30,
         left: '10%',
         opacity: 0.9,
+        borderColor: 'rgb(49, 137, 197)',
+        borderWidth: 4,
     },
 
     formText: {
