@@ -11,7 +11,7 @@
 
 **SAGS Mobile** es la versión móvil del sistema **SAGS (Sistema Avanzado de Gestión de Software)**, una herramienta integral que mejora la planificación y documentación en las etapas iniciales del ciclo de vida del software.
 
-Esta app permite consultar los modelos correspondientes de un proyecto y su avance desde cualquier dispositivo móvil, facilitando el trabajo en equipo, la verificación de requisitos, y el seguimiento del proyecto en tiempo real. Diseñada en **React Native** y **TypeScript**, ofrece una experiencia ágil, moderna y extensible.
+Esta app permite consultar proyectos desde cualquier dispositivo móvil, facilitando el seguimiento en tiempo real. Desarrollada con React Native y TypeScript, garantiza una experiencia rápida, moderna y fácilmente escalable.
 
 ---
 
