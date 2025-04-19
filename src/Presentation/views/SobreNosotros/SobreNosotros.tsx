@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Linking } from 'react-
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RoundedButton } from '../../components/RoundedButton';
 import { Nav } from '../../components/Nav';
 import { SocialLinks } from '../../components/SocialLinks';
 
@@ -114,7 +113,6 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        transition: 'transform 0.3s ease',
     },
 
     expanded: {

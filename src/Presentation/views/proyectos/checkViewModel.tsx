@@ -1,11 +1,8 @@
 import { AuthRepositoryImpl } from "../../../Data/repositories/AuthRepository";
-import { ChecklistEntities } from '../../../Domain/Entities/User';
 
 
-// Caso de uso para obtener los checklists
 export class GetChecklistsUseCase {
 
-  // Caso de uso para obtener los checklists
   constructor(private repository: AuthRepositoryImpl) { }
 
   async execute(): Promise<{

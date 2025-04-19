@@ -1,9 +1,9 @@
 import { AxiosError } from "axios";
-import { RegisterProyEntities, User, ChecklistEntities } from "../../Domain/Entities/User";
+import { RegisterProyEntities, User } from "../../Domain/Entities/User";
 import { AuthRepository } from "../../Domain/repositories/AuthRepository";
 import { ApiDelivery } from "../api/ApiDelivery";
 import { ResponseApiDelivery } from "../sources/remote/models/ResponseApiDelivery";
-import { Checklist } from '../../Presentation/views/proyectos/Checklist';
+
 
 export class AuthRepositoryImpl implements AuthRepository {
 

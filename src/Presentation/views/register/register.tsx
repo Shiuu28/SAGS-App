@@ -7,7 +7,6 @@ import { RootStackParamList } from '../../../../App';
 import { Nav } from '../../components/Nav';
 import useRegisterViewModel from "../../views/register/viewModel";
 import { CustomTextInput } from '../../components/CustomTextInput';
-import { MyColors } from '../../theme/AppTheme';
 
 
 export const RegisterScreen = () => {

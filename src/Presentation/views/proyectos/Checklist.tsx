@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Linking, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -66,8 +66,7 @@ export const Checklist = () => {
                 path: url
             });
 
-            // Opcional: Abrir en navegador externo
-            await Linking.openURL(url);
+            
         } catch (error) {
             console.error('Error en el documento:', error);
             Alert.alert('Error', 'No se pudo abrir el documento');

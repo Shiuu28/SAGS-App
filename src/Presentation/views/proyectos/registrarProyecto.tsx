@@ -7,7 +7,6 @@ import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
-import { RegisterProyEntities } from '../../../Domain/Entities/User'; 
 import useRegisterProyViewModel from './registerViewModel';
 
 export const NewProyScreen = () => {
