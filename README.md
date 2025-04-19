@@ -3,7 +3,7 @@
 [![React Native](https://img.shields.io/badge/Mobile-React--Native-61dafb?style=for-the-badge&logo=react)](https://reactnative.dev/)
 [![TypeScript](https://img.shields.io/badge/Code-TypeScript-3178c6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
-> 📌 Repositorio web: [SAGS Web App](https://github.com/SantiagoC18/sags)
+> 📌 Repositorio web: [SAGS Web](https://github.com/SantiagoC18/sags)
 
 ---
 
@@ -20,7 +20,7 @@ Esta app permite consultar proyectos desde cualquier dispositivo móvil, facilit
 - ✅ **Visualización de documentos**  
 - 🔐 **Autenticación de usuarios con roles y permisos**
 - 🗂 **Gestión de proyectos y visualización por estado**
-- 🔄 **Sincronización con API **
+- 🔄 **Sincronización con API**
 - 📱 **UI intuitiva**
 
 ---
