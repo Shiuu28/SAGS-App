@@ -1,6 +1,6 @@
 # 📱 SAGS Mobile – Sistema Avanzado de Gestión de Software (App Móvil)
 
-[![React Native](https://img.shields.io/badge/Mobile-React--Native-61dafb?style=for-the-badge&logo=react)](https://reactnative.dev/)
+[![React Native](https://img.shields.io/badge/Mobile-React--Native-61dafb?style=for-the-badge&logo=react)]
 [![TypeScript](https://img.shields.io/badge/Code-TypeScript-3178c6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
 > 📌 Repositorio web: [SAGS Web App](https://github.com/SantiagoC18/sags)
