@@ -1,5 +1,5 @@
 import React, {useEffect } from 'react'
-import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, Alert } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
