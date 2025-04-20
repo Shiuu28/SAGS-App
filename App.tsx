@@ -8,6 +8,7 @@ import { NewProyScreen } from './src/Presentation/views/proyectos/registrarProye
 import { SobreNosotros } from './src/Presentation/views/SobreNosotros/SobreNosotros';
 import { PerfilUsu } from './src/Presentation/views/home/PerfilUsu';
 import { Checklist } from './src/Presentation/views/proyectos/Checklist';
+import { EditarPerfil } from './src/Presentation/views/home/EditarPerfil';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -17,6 +18,7 @@ export type RootStackParamList = {
   SobreNosotros: undefined;
   PerfilUsu: undefined;
   Checklist: undefined;
+  EditarPerfil: undefined;
 }
 
 
@@ -64,6 +66,10 @@ const App = () => {
           component={Checklist}
         />
 
+        <Stack.Screen
+          name="EditarPerfil"
+          component={EditarPerfil}
+        />
 
 
         { /*<Stack.Screen name="Profile" component={ProfileScreen} /> */}

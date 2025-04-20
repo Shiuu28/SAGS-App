@@ -1,8 +1,8 @@
 export interface User {
     email: string;
     tipodoc: string;
-    documento: string; 
-    password: string;  
+    documento: string;
+    password: string;
 }
 
 export interface RegisterProyEntities {
@@ -20,4 +20,12 @@ export interface ChecklistEntities {
     archivo: string;
     fecha: string;
     checked: boolean;
+}
+
+export interface PerfilEntities {
+    nombres: string;
+    email: string;
+    funcion: string;
+    nombre_proyecto: string;
+    descripcion_proyecto: string;
 }

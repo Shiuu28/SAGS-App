@@ -1,8 +1,9 @@
 import { AxiosError } from "axios";
 import { RegisterProyEntities, User } from "../../Domain/Entities/User";
-import { AuthRepository } from "../../Domain/repositories/AuthRepository";
+import { AuthRepository } from '../../Domain/repositories/AuthRepository';
 import { ApiDelivery } from "../api/ApiDelivery";
 import { ResponseApiDelivery } from "../sources/remote/models/ResponseApiDelivery";
+import { PerfilEntities } from "../../Domain/Entities/User";
 
 
 export class AuthRepositoryImpl implements AuthRepository {
@@ -78,7 +79,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       };
     }
   }
- 
+
   async getDocument(nombreArchivo: string): Promise<Blob> {
     try {
       const response = await ApiDelivery.get(`/documents/${nombreArchivo}`, {
@@ -92,4 +93,64 @@ export class AuthRepositoryImpl implements AuthRepository {
   }
 
 
+
+
+
+  async getPerfil(email: string): Promise<ResponseApiDelivery> {
+    try {
+      const response = await ApiDelivery.post<ResponseApiDelivery>('/perfil', {
+        email: email
+      });
+
+      return response.data;
+    } catch (error) {
+      console.log('Error en PerfilRepository:', error);
+      return {
+        success: false,
+        message: 'Error al obtener datos del perfil',
+        data: null
+      };
+    }
+  }
+
+  async PerfilEntities(email: string): Promise<PerfilEntities> {
+    try {
+      const response = await this.getPerfil(email);
+      if (response.success && response.data && response.data.length > 0) {
+        return response.data[0] as PerfilEntities;
+      }
+      throw new Error(response.message || 'Error al obtener perfil');
+    } catch (error) {
+      throw new Error('Error al obtener datos del perfil');
+    }
+  }
+
+  async updatePerfil(perfil: PerfilEntities): Promise<ResponseApiDelivery> {
+      try {
+          const response = await ApiDelivery.put<ResponseApiDelivery>('/updatePerfil', perfil);
+          return response.data;
+      } catch (error) {
+          const e = error as AxiosError;
+          return {
+              success: false,
+              message: 'Error al actualizar el perfil',
+              data: null
+          };
+      }
+  }
+
+  async deleteUser(email: string): Promise<ResponseApiDelivery> {
+      try {
+          const response = await ApiDelivery.delete<ResponseApiDelivery>(`/deleteUser/${email}`);
+          return response.data;
+      } catch (error) {
+          const e = error as AxiosError;
+          return {
+              success: false,
+              message: 'Error al eliminar el usuario',
+              data: null
+          };
+      }
+  }
 }
+

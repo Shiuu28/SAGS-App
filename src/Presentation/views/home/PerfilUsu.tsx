@@ -1,16 +1,47 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, TouchableOpacity, Modal } from 'react-native';
+import React from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Nav from '../../components/Nav';
+import usePerfilViewModel from './viewModelPerfil';  // Change this import
+import { UpdatePerfilUseCase } from '../../../Domain/useCases/auth/UpdatePerfil';
 
 export const PerfilUsu = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const [isEditProfileVisible, setEditProfileVisible] = React.useState(false);
-    const [isChangePasswordVisible, setChangePasswordVisible] = React.useState(false);
+    const { perfilData, errorMessage, loading, eliminarUsuario } = usePerfilViewModel();
 
+    const handleEliminarUsuario = () => {
+        Alert.alert(
+            "Eliminar Usuario",
+            "¿Estás seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Eliminar",
+                    onPress: async () => {
+                        await eliminarUsuario();
+                        navigation.navigate('HomeScreen');
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
+
+    if (loading) {
+        return (
+            <View style={[styles.container, styles.loadingContainer]}>
+                <ActivityIndicator size="large" color="white" />
+            </View>
+        );
+    }
+
+    // Remove the unused UpdatePerfil function
     return (
         <View style={styles.container}>
             <Image
@@ -18,47 +49,49 @@ export const PerfilUsu = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() =>
-                navigation.navigate('HomeScreen')}>
-
-            </Nav>
+            <Nav onPress={() => navigation.navigate('HomeScreen')} />
 
             {/* User Info Section */}
             <View style={styles.Info}>
                 <View style={styles.userInfo}>
                     <Text style={styles.sectionTitle}>Información del Usuario</Text>
-                    <View style={styles.userDetails}>
-                        <Image
-                            source={require('../../../../assets/sirs.jpg')}
-                            style={styles.profileImage}
-                        />
-                        <View style={styles.userText}>
-                            <Text style={styles.userDataText}>
-                                <Text style={styles.bold}>Nombre: </Text>
-                            </Text>
-                            <Text style={styles.userDataText}>
-                                <Text style={styles.bold}>Correo Electrónico: </Text>
-                            </Text>
-                            <Text style={styles.userDataText}>
-                                <Text style={styles.bold}>Funcion: </Text>
-                            </Text>
-                            <View style={styles.buttons}>
-                                <RoundedButton text='Editar Datos' onPress={() => {
-                                    navigation.navigate('PerfilUsu')
-                                }}>
-                                </RoundedButton>
-
-                                <RoundedButton text='Editar Clave' onPress={() => {
-                                    navigation.navigate('PerfilUsu')
-                                }}>
-                                </RoundedButton>
+                    {errorMessage ? (
+                        <Text style={styles.errorText}>{errorMessage}</Text>
+                    ) : (
+                        <View style={styles.userDetails}>
+                            <Image
+                                source={require('../../../../assets/sirs.jpg')}
+                                style={styles.profileImage}
+                            />
+                            <View style={styles.userText}>
+                                <Text style={styles.userDataText}>
+                                    <Text style={styles.bold}>Nombre: </Text>
+                                    {perfilData?.nombres}
+                                </Text>
+                                <Text style={styles.userDataText}>
+                                    <Text style={styles.bold}>Correo Electrónico: </Text>
+                                    {perfilData?.email}
+                                </Text>
+                                <Text style={styles.userDataText}>
+                                    <Text style={styles.bold}>Función: </Text>
+                                    {perfilData?.funcion}
+                                </Text>
+                                <View style={styles.buttons}>
+                                    <RoundedButton 
+                                        text='Editar Datos' 
+                                        onPress={() => navigation.navigate('EditarPerfil')} 
+                                    />
+                                    <RoundedButton 
+                                        text='Editar Clave' 
+                                        onPress={() => navigation.navigate('PerfilUsu')} 
+                                    />
+                                </View>
                             </View>
+                            <TouchableOpacity onPress={handleEliminarUsuario}>
+                                <Text style={styles.deleteUserText}>Eliminar Usuario</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() =>
-                            navigation.navigate('PerfilUsu')}>
-                            <Text style={styles.deleteUserText}>Eliminar Usuario</Text>
-                        </TouchableOpacity>
-                    </View>
+                    )}
                 </View>
 
                 <View style={styles.projectsSection}>
@@ -68,9 +101,9 @@ export const PerfilUsu = () => {
                             style={styles.add} />
                     </View>
                     <View style={styles.projectCard}>
-                        <Text style={styles.projectTitle}>Proyecto: </Text>
-                        <Text style={styles.projectDesc}>Descripción: </Text>
-                        <Text style={styles.projectStatus}>Estado: </Text>
+                        <Text style={styles.projectTitle}>Proyecto: {perfilData?.nombre_proyecto}</Text>
+                        <Text style={styles.projectDesc}>Descripción: {perfilData?.descripcion_proyecto}</Text>
+                        <Text style={styles.projectStatus}>Estado: Activo</Text>
                     </View>
                 </View>
             </View>
@@ -211,5 +244,16 @@ const styles = StyleSheet.create({
         top: 12,
     },
 
+    loadingContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    
+    errorText: {
+        color: 'red',
+        textAlign: 'center',
+        fontSize: 16,
+        marginTop: 10
+    }
 });
 
