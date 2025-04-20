@@ -1,6 +1,6 @@
 import React, { useEffect} from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TextInput, ToastAndroid, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, Alert, ScrollView } from 'react-native';
 import { RoundedButton } from '../../components/RoundedButton'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../App';
@@ -15,7 +15,7 @@ export const RegisterScreen = () => {
 
     useEffect(() => {
             if (errorMessage !== '')
-                ToastAndroid.show(errorMessage, ToastAndroid.LONG)
+                Alert.alert('Error', errorMessage);
         }, [errorMessage]
     );
 

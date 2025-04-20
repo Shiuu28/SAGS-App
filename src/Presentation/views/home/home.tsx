@@ -6,6 +6,8 @@ import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useHomeViewModel from './viewModel';
 import { CustomTextInput } from '../../components/CustomTextInput';
+import { Icon } from 'react-native-paper';
+import { IconAdornment } from 'react-native-paper/lib/typescript/components/TextInput/Adornment/TextInputIcon';
 
 
 export const HomeScreen = () => {
@@ -15,7 +17,7 @@ export const HomeScreen = () => {
 
     useEffect(() => {
         if (errorMessage !== '') {
-            ToastAndroid.show(errorMessage, ToastAndroid.LONG);
+            Alert.alert('Error', errorMessage);
         }
     }, [errorMessage]);
 

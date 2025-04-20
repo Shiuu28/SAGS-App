@@ -42,6 +42,10 @@ const useHomeViewModel = () => {
 
 
     const isValidForm = () => {
+        if(!values.email && !values.password){
+            setErrorMessage('Debe completar todos los campos');
+            return false;
+        }
         if (values.email === '') {
             setErrorMessage('El email es requerido');
             return false;

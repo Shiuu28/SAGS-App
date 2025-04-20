@@ -12,7 +12,7 @@ const useRegisterViewModel = () => {
     });
 
     const onChange = (property: string, value: any) => {
-        setValues({...values, [property]: value});
+        setValues({ ...values, [property]: value });
     };
 
     const register = async () => {
@@ -23,7 +23,10 @@ const useRegisterViewModel = () => {
     }
 
     const isValidForm = (): boolean => {
-       
+        if (!values.documento && !values.email && !values.password && !values.tipodoc) {
+            setErrorMessage('Debe completar todos los campos');
+            return false;
+        }
         if (values.tipodoc === '') {
             setErrorMessage('El tipo de documento es requerido');
             return false;
@@ -40,7 +43,7 @@ const useRegisterViewModel = () => {
             setErrorMessage('La contraseña es requerida');
             return false;
         }
-       
+
         return true;
     }
 
@@ -48,7 +51,7 @@ const useRegisterViewModel = () => {
         ...values,
         onChange,
         register,
-        errorMessage, 
+        errorMessage,
         setErrorMessage
     };
 };
