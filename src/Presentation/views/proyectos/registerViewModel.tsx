@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { RegisterProyAuthUseCase } from "../../../Domain/useCases/auth/RegisterProy";
+import { Alert } from "react-native";
 
 
 const useRegisterProyViewModel = () => {
@@ -22,7 +23,7 @@ const useRegisterProyViewModel = () => {
                 const result = await RegisterProyAuthUseCase(values);
     
                 if (result.success) {
-                    console.log('Proyecto registrado exitosamente');
+                    Alert.alert('Proyecto registrado exitosamente');
                 }
             } catch (error: any) {
                 console.error('Error en el registro:', error.message || error.error);
