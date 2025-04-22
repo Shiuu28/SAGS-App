@@ -7,7 +7,7 @@ export class GetChecklistsUseCase {
 
   async execute(): Promise<{
     success: boolean;
-    data?: any[];
+    user?: any[];
     message?: string;
     error?: any;
   }> {
@@ -15,7 +15,7 @@ export class GetChecklistsUseCase {
       const response = await this.repository.getChecklists();
       return {
         success: response.success,
-        data: response.data,
+        user: response.user,
         message: response.message
       };
     } catch (error) {

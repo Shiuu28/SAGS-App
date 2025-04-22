@@ -1,10 +1,11 @@
 import { UserLocalRepositoryImp } from "../../../Data/repositories/UserLocalRepository";
-import { User } from '../../../Domain/Entities/User';
+import { User } from '../../Entities/User';
 
-
-const { save } = new UserLocalRepositoryImp();
-
+const userLocalRepository = new UserLocalRepositoryImp();
 
 export const SaveUserLocalUseCase = async (user: User) => {
-    return await save(user);
-} 
+    if (!user || !user.email) {
+        throw new Error('Datos de usuario inválidos');
+    }
+    return await userLocalRepository.save(user);
+}

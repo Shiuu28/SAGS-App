@@ -5,19 +5,23 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../../App";
 
+
 interface ImageProps {
     onPress: () => void,
+    logout: () => void,
 }
 
 
-export const Nav = ({ onPress }: ImageProps) => {
+export const Nav = ({ onPress, logout }: ImageProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const menu = [
         { id: "1", label: "Home", action: () => navigation.navigate('HomeScreen')},
         { id: "2", label: "Perfil", action: () => navigation.navigate("PerfilUsu")},        
         { id: "3", label: "Gestión de Proyectos", action: () => navigation.navigate("Proyectos")},
-        { id: "4", label: "Sobre Nosotros", action: () => navigation.navigate("SobreNosotros")}
+        { id: "4", label: "Sobre Nosotros", action: () => navigation.navigate("SobreNosotros")},
+        { id: "5", label: "PQRS", action: () => navigation.navigate("PQRS")},
+        { id: "6", label: "Cerrar sesión", action: () => logout() }
     ];
 
 
@@ -42,7 +46,7 @@ export const Nav = ({ onPress }: ImageProps) => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => {
-                navigation.navigate('HomeScreen');
+                navigation.navigate('Proyectos');
             }}>
                 <Image
                     source={require('../../../assets/sirs.jpg')}

@@ -5,9 +5,10 @@ import { useUserLocal } from '../../hooks/useUserLocal';
 
 const usePerfilViewModel = () => {
     const [perfilData, setPerfilData] = useState<PerfilEntities | null>(null);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const { user } = useUserLocal();
+
 
     const getPerfilInfo = async () => {
         try {
@@ -22,8 +23,8 @@ const usePerfilViewModel = () => {
             const response = await GetPerfilUseCase(user.email);
             console.log('Respuesta perfil:', response);
 
-            if (response.success && response.data && response.data.length > 0) {
-                setPerfilData(response.data[0]);
+            if (response.success && response.user && response.user.length > 0) {
+                setPerfilData(response.user);
             } else {
                 setErrorMessage(response.message || 'No se encontraron datos del perfil');
             }

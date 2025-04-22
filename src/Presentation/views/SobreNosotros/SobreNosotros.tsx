@@ -5,10 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Nav } from '../../components/Nav';
 import { SocialLinks } from '../../components/SocialLinks';
+import useHomeViewModel from '../home/viewModel';
 
 
 
 export const SobreNosotros = () => {
+    const {logout} = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [expandedImage, setExpandedImage] = useState<number | null>(null);
 
@@ -28,9 +30,7 @@ export const SobreNosotros = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() =>
-                navigation.navigate('HomeScreen')}>
-            </Nav>
+            <Nav onPress={() => navigation.navigate('Proyectos')} logout={logout}></Nav>
 
             <View style={styles.info}>
                 <Text style={styles.titulo}>Sobre Nosotros</Text>

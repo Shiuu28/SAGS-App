@@ -7,8 +7,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import Nav from '../../components/Nav';
+import useHomeViewModel from './viewModel';
 
 export const EditarPerfil = () => {
+    const {logout} = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { nombres, email, funcion, onChange, updatePerfil, errorMessage } = useEditarPerfilViewModel();
 
@@ -19,7 +21,7 @@ export const EditarPerfil = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() => navigation.navigate('HomeScreen')} />
+            <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout} />
 
             <View style={styles.formContainer}>
                 <Text style={styles.title}>Editar Perfil</Text>

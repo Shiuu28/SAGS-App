@@ -8,11 +8,12 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
 import useRegisterProyViewModel from './registerViewModel';
+import useHomeViewModel from '../home/viewModel';
 
 export const NewProyScreen = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { nombre, descripcion, tipo, fechaI, onChange, errorMessage, RegisterProy } = useRegisterProyViewModel();
-
+    const {logout} = useHomeViewModel();
 
     const [date, setDate] = useState(new Date());
     const [showDataPicker, setShowDataPicker] =useState(false);
@@ -32,6 +33,7 @@ export const NewProyScreen = () => {
         }, [errorMessage]
     );
 
+
     return (
         <View style={styles.container}>
             <Image
@@ -39,9 +41,7 @@ export const NewProyScreen = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() =>
-                navigation.navigate('HomeScreen')}>
-            </Nav>
+            <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout}></Nav>
 
 
             <View style={styles.formContainer}>

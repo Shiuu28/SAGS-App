@@ -1,6 +1,7 @@
 export interface ResponseApiDelivery {
     success: boolean;
     message: string;
-    data?: any;
+    user?: any;
+    token?: string;
     error?: any;
 }

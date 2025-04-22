@@ -1,14 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Nav from '../../components/Nav';
-import usePerfilViewModel from './viewModelPerfil';  // Change this import
-import { UpdatePerfilUseCase } from '../../../Domain/useCases/auth/UpdatePerfil';
+import usePerfilViewModel from './viewModelPerfil';  
+import useHomeViewModel from './viewModel';
+import { AuthContext, AuthProvider } from '../../../Domain/useCases/auth/AuthContext';
+
 
 export const PerfilUsu = () => {
+    const { user } = useContext(AuthContext);
+    const {logout} = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { perfilData, errorMessage, loading, eliminarUsuario } = usePerfilViewModel();
 
@@ -41,7 +45,6 @@ export const PerfilUsu = () => {
         );
     }
 
-    // Remove the unused UpdatePerfil function
     return (
         <View style={styles.container}>
             <Image
@@ -49,7 +52,7 @@ export const PerfilUsu = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() => navigation.navigate('HomeScreen')} />
+            <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout}></Nav>
 
             {/* User Info Section */}
             <View style={styles.Info}>
@@ -65,7 +68,7 @@ export const PerfilUsu = () => {
                             />
                             <View style={styles.userText}>
                                 <Text style={styles.userDataText}>
-                                    <Text style={styles.bold}>Nombre: </Text>
+                                    <Text style={styles.bold}>Nombre:, {user?.name} </Text>
                                     {perfilData?.nombres}
                                 </Text>
                                 <Text style={styles.userDataText}>

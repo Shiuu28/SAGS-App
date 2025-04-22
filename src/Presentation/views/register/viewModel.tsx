@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { RegisterAuthUseCase } from "../../../Domain/useCases/auth/RegisterAuth";
+import { Alert } from "react-native";
 
 
 const useRegisterViewModel = () => {

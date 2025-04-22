@@ -3,6 +3,7 @@ export interface User {
     tipodoc: string;
     documento: string;
     password: string;
+    session_token?: string;
 }
 
 export interface RegisterProyEntities {

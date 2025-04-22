@@ -9,6 +9,8 @@ import { SobreNosotros } from './src/Presentation/views/SobreNosotros/SobreNosot
 import { PerfilUsu } from './src/Presentation/views/home/PerfilUsu';
 import { Checklist } from './src/Presentation/views/proyectos/Checklist';
 import { EditarPerfil } from './src/Presentation/views/home/EditarPerfil';
+import { PQRS } from './src/Presentation/views/Api/pqrs';
+import { AuthProvider } from './src/Domain/useCases/auth/AuthContext';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -19,6 +21,7 @@ export type RootStackParamList = {
   PerfilUsu: undefined;
   Checklist: undefined;
   EditarPerfil: undefined;
+  PQRS: undefined;
 }
 
 
@@ -26,6 +29,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const App = () => {
 
   return (
+    <AuthProvider>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
         headerShown: false
@@ -71,10 +75,16 @@ const App = () => {
           component={EditarPerfil}
         />
 
+        <Stack.Screen
+          name="PQRS"
+          component={PQRS}
+        />
+
 
         { /*<Stack.Screen name="Profile" component={ProfileScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
+    </AuthProvider>
   );
 };
 

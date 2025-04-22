@@ -6,8 +6,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoundedButton } from '../../components/RoundedButton';
 import { Nav } from '../../components/Nav';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import useHomeViewModel from '../home/viewModel';
+
 
 export const Proyectos = () => {
+    const {logout} = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     return (
@@ -17,9 +20,7 @@ export const Proyectos = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() =>
-                navigation.navigate('HomeScreen')}>
-            </Nav>
+            <Nav onPress={() => navigation.navigate('Proyectos')} logout={logout}></Nav>
 
 
             <View style={styles.cardsContainer}>

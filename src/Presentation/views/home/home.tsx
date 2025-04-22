@@ -1,4 +1,4 @@
-import React, {useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native';
 import { RootStackParamList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
@@ -6,6 +6,7 @@ import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useHomeViewModel from './viewModel';
 import { CustomTextInput } from '../../components/CustomTextInput';
+import { obtenerDatosProtegidos } from '../../../../token/service';
 
 
 export const HomeScreen = () => {
@@ -13,14 +14,27 @@ export const HomeScreen = () => {
     const { email, password, errorMessage, onChange, login } = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+    // datosService.ts
+    const handleLogin = async () => {
+        try {
+            await login();
+            const data = await obtenerDatosProtegidos();
+            console.log("Datos protegidos:", data);
+        } catch (err) {
+            console.error("Error:", err);
+        }
+    };
+
+
     useEffect(() => {
         if (errorMessage !== '') {
             Alert.alert('Error', errorMessage);
         }
     }, [errorMessage]);
 
-    return (
 
+
+    return (
         <View style={styles.container}>
             <Image
                 source={require('../../../../assets/background.png')}
@@ -37,30 +51,31 @@ export const HomeScreen = () => {
 
             <View style={styles.form}>
                 <Text style={styles.formText}>Iniciar Sesion</Text>
-                
-                    <CustomTextInput
-                        image={require('../../../../assets/user.png')}
-                        placeholder='Correo electrónico'
-                        keyboardType='email-address'
-                        property='email'
-                        value={email}
-                        onChangeText={onChange}
-                    />
 
-                    <CustomTextInput
-                        image={require('../../../../assets/password.png')}
-                        placeholder='Contraseña'
-                        keyboardType='default'
-                        property='password'
-                        secureTextEntry={true}
-                        value={password}
-                        onChangeText={onChange}
-                    />
+                <CustomTextInput
+                    image={require('../../../../assets/user.png')}
+                    placeholder='Correo electrónico'
+                    keyboardType='email-address'
+                    property='email'
+                    value={email}
+                    onChangeText={onChange}
+                />
+
+                <CustomTextInput
+                    image={require('../../../../assets/password.png')}
+                    placeholder='Contraseña'
+                    keyboardType='default'
+                    property='password'
+                    secureTextEntry={true}
+                    value={password}
+                    onChangeText={onChange}
+                />
 
 
                 <View style={{ marginTop: 30 }}>
-                    <RoundedButton text='INGRESAR' onPress={() => {login();
-                        navigation.navigate('Proyectos');
+                    <RoundedButton text='INGRESAR' onPress={() => {
+                        login();
+                        { handleLogin };
                     }} />
                 </View>
 
@@ -137,7 +152,7 @@ const styles = StyleSheet.create({
         color: '#146099',
         textAlign: 'center',
         fontFamily: 'serif',
-    },   
+    },
 
     formRegister: {
         flexDirection: 'row',

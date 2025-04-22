@@ -7,9 +7,11 @@ import { RootStackParamList } from '../../../../App';
 import { Nav } from '../../components/Nav';
 import useRegisterViewModel from "../../views/register/viewModel";
 import { CustomTextInput } from '../../components/CustomTextInput';
+import useHomeViewModel from '../home/viewModel';
 
 
 export const RegisterScreen = () => {
+    const {logout} = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { email, tipodoc, documento, password, onChange, errorMessage, register } = useRegisterViewModel();
 
@@ -28,9 +30,7 @@ export const RegisterScreen = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() =>
-                navigation.navigate('HomeScreen')}>
-            </Nav>
+            <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout}></Nav>
 
             <View style={styles.logoContainer}>
                 <Text style={styles.logoText}>¡BIENVENIDO!</Text>

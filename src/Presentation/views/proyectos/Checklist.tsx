@@ -9,10 +9,12 @@ import { GetChecklistsUseCase, GetDocumentUseCase } from './checkViewModel';
 import { WebView } from 'react-native-webview';
 import { ChecklistEntities } from '../../../Domain/Entities/User';
 import { AuthRepositoryImpl } from '../../../Data/repositories/AuthRepository';
+import useHomeViewModel from '../home/viewModel';
 
 
 
 export const Checklist = () => {
+    const {logout} = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const [selectedDocument, setSelectedDocument] = useState<{
@@ -35,8 +37,8 @@ export const Checklist = () => {
         try {
             const result = await getChecklistsUseCase.execute();
 
-            if (result.success && result.data) {
-                const checklistsWithChecked = result.data.map(item => ({
+            if (result.success && result.user) {
+                const checklistsWithChecked = result.user.map(item => ({
                     ...item,
                     idmod: item.idmod.toString(), // Convertir a string si es necesario
                     nombre: item.nombre || `Documento ${item.idmod}`,
@@ -86,7 +88,7 @@ export const Checklist = () => {
                 style={styles.imageBackground}
             />
 
-            <Nav onPress={() => navigation.navigate('HomeScreen')} />
+            <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout} />
 
             <Text style={styles.title}>Checklist de Documentación</Text>
 

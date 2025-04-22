@@ -4,7 +4,7 @@ import { AuthRepository } from '../../Domain/repositories/AuthRepository';
 import { ApiDelivery } from "../api/ApiDelivery";
 import { ResponseApiDelivery } from "../sources/remote/models/ResponseApiDelivery";
 import { PerfilEntities } from "../../Domain/Entities/User";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export class AuthRepositoryImpl implements AuthRepository {
 
@@ -25,7 +25,6 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-
   async login(email: string, password: string): Promise<ResponseApiDelivery> {
     try {
       const response = await ApiDelivery.post<ResponseApiDelivery>('/login', {
@@ -33,13 +32,20 @@ export class AuthRepositoryImpl implements AuthRepository {
         password: password,
       });
 
-      return Promise.resolve(response.data);
+      const {token, user} = response.data;
+      if (token) {
+        await AsyncStorage.setItem('token', token);
+      } else {
+        throw new Error('Token no recibido del servidor');
+      }
+      
 
+      return response.data;
     } catch (error) {
-      let e = (error as AxiosError);
-      console.log('error' + JSON.stringify(e.response?.data));
+      const e = error as AxiosError;
+      console.log('Error en login:', JSON.stringify(e.response?.data));
       const apiError: ResponseApiDelivery = JSON.parse(JSON.stringify(e.response?.data));
-      return Promise.resolve(apiError);
+      return apiError;
     }
   }
 
@@ -60,14 +66,13 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-
   async getChecklists(): Promise<ResponseApiDelivery> {
     try {
       const response = await ApiDelivery.get<ResponseApiDelivery>('/check');
       return {
         success: true,
         message: response.data.message || "Checklists obtenidos exitosamente",
-        data: response.data.data
+        user: response.data.user
       };
     } catch (error) {
       const e = error as AxiosError;
@@ -92,32 +97,25 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-
-
-
-
   async getPerfil(email: string): Promise<ResponseApiDelivery> {
     try {
-      const response = await ApiDelivery.post<ResponseApiDelivery>('/perfil', {
-        email: email
-      });
-
-      return response.data;
+        const response = await ApiDelivery.get<ResponseApiDelivery>('/perfil?email=${email');
+        return response.data;
     } catch (error) {
-      console.log('Error en PerfilRepository:', error);
-      return {
-        success: false,
-        message: 'Error al obtener datos del perfil',
-        data: null
-      };
+        console.log('Error en PerfilRepository:', error);
+        return {
+            success: false,
+            message: 'Error al obtener datos del perfil',
+            user: null
+        };
     }
   }
 
   async PerfilEntities(email: string): Promise<PerfilEntities> {
     try {
       const response = await this.getPerfil(email);
-      if (response.success && response.data && response.data.length > 0) {
-        return response.data[0] as PerfilEntities;
+      if (response.success && response.user && response.user.length > 0) {
+        return response.user[0] as PerfilEntities;
       }
       throw new Error(response.message || 'Error al obtener perfil');
     } catch (error) {
@@ -134,7 +132,7 @@ export class AuthRepositoryImpl implements AuthRepository {
           return {
               success: false,
               message: 'Error al actualizar el perfil',
-              data: null
+              user: null
           };
       }
   }
@@ -148,9 +146,8 @@ export class AuthRepositoryImpl implements AuthRepository {
           return {
               success: false,
               message: 'Error al eliminar el usuario',
-              data: null
+              user: null
           };
       }
   }
 }
-
