@@ -99,8 +99,8 @@ export class AuthRepositoryImpl implements AuthRepository {
 
   async getPerfil(email: string): Promise<ResponseApiDelivery> {
     try {
-        const response = await ApiDelivery.get<ResponseApiDelivery>('/perfil?email=${email');
-        return response.data;
+      const response = await ApiDelivery.get<ResponseApiDelivery>(`/perfil?email=${email}`);
+      return response.data;
     } catch (error) {
         console.log('Error en PerfilRepository:', error);
         return {

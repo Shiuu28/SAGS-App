@@ -5,14 +5,17 @@ import { useNavigation } from '@react-navigation/native';
 import { RoundedButton } from '../../components/RoundedButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Nav from '../../components/Nav';
-import usePerfilViewModel from './viewModelPerfil';  
+import usePerfilViewModel from './viewModelPerfil';
 import useHomeViewModel from './viewModel';
 import { AuthContext, AuthProvider } from '../../../Domain/useCases/auth/AuthContext';
+import { ScrollView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { NewProyScreen } from '../proyectos/registrarProyecto';
 
 
 export const PerfilUsu = () => {
     const { user } = useContext(AuthContext);
-    const {logout} = useHomeViewModel();
+    const { logout } = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { perfilData, errorMessage, loading, eliminarUsuario } = usePerfilViewModel();
 
@@ -46,71 +49,81 @@ export const PerfilUsu = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <Image
-                source={require('../../../../assets/background.png')}
-                style={styles.imageBackground}
-            />
+        <GestureHandlerRootView style={{ flex: 1 }}>
 
-            <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout}></Nav>
+            <AuthProvider>
 
-            {/* User Info Section */}
-            <View style={styles.Info}>
-                <View style={styles.userInfo}>
-                    <Text style={styles.sectionTitle}>Información del Usuario</Text>
-                    {errorMessage ? (
-                        <Text style={styles.errorText}>{errorMessage}</Text>
-                    ) : (
-                        <View style={styles.userDetails}>
-                            <Image
-                                source={require('../../../../assets/sirs.jpg')}
-                                style={styles.profileImage}
-                            />
-                            <View style={styles.userText}>
-                                <Text style={styles.userDataText}>
-                                    <Text style={styles.bold}>Nombre:, {user?.name} </Text>
-                                    {perfilData?.nombres}
-                                </Text>
-                                <Text style={styles.userDataText}>
-                                    <Text style={styles.bold}>Correo Electrónico: </Text>
-                                    {perfilData?.email}
-                                </Text>
-                                <Text style={styles.userDataText}>
-                                    <Text style={styles.bold}>Función: </Text>
-                                    {perfilData?.funcion}
-                                </Text>
-                                <View style={styles.buttons}>
-                                    <RoundedButton 
-                                        text='Editar Datos' 
-                                        onPress={() => navigation.navigate('EditarPerfil')} 
-                                    />
-                                    <RoundedButton 
-                                        text='Editar Clave' 
-                                        onPress={() => navigation.navigate('PerfilUsu')} 
-                                    />
+                <View style={styles.container}>
+                    <Image
+                        source={require('../../../../assets/background.png')}
+                        style={styles.imageBackground}
+                    />
+
+                    <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout}></Nav>
+
+                    {/* User Info Section */}
+                    <View style={styles.Info}>
+                        <ScrollView>
+                            <View style={styles.userInfo}>
+                                <Text style={styles.sectionTitle}>Información del Usuario</Text>
+                                {errorMessage ? (
+                                    <Text style={styles.errorText}>{errorMessage}</Text>
+                                ) : (
+                                    <View style={styles.userDetails}>
+                                        <Image
+                                            source={require('../../../../assets/sirs.jpg')}
+                                            style={styles.profileImage}
+                                        />
+                                        <View style={styles.userText}>
+                                            <Text style={styles.userDataText}>
+                                                <Text style={styles.bold}>Nombre: {user?.name} </Text>
+                                                {perfilData?.nombres}
+                                            </Text>
+                                            <Text style={styles.userDataText}>
+                                                <Text style={styles.bold}>Correo Electrónico: </Text>
+                                                {perfilData?.email}
+                                            </Text>
+                                            <Text style={styles.userDataText}>
+                                                <Text style={styles.bold}>Función: </Text>
+                                                {perfilData?.funcion}
+                                            </Text>
+                                            <View style={styles.buttons}>
+                                                <RoundedButton
+                                                    text='Editar Datos'
+                                                    onPress={() => navigation.navigate('EditarPerfil')}
+                                                />
+                                                <RoundedButton
+                                                    text='Editar Clave'
+                                                    onPress={() => navigation.navigate('PerfilUsu')}
+                                                />
+                                            </View>
+                                        </View>
+                                        <TouchableOpacity onPress={handleEliminarUsuario}>
+                                            <Text style={styles.deleteUserText}>Eliminar Usuario</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            </View>
+
+                            <View style={styles.projectsSection}>
+                                <View style={styles.addProject}>
+                                    <Text style={styles.sectionTitle}>Proyectos del Usuario</Text>
+                                    <TouchableOpacity onPress={() => navigation.navigate('NewProyScreen')}>
+                                        <Image source={require('../../../../assets/mas.png')}
+                                            style={styles.add} />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.projectCard}>
+                                    <Text style={styles.projectTitle}>Proyecto: {perfilData?.nombre_proyecto}</Text>
+                                    <Text style={styles.projectDesc}>Descripción: {perfilData?.descripcion_proyecto}</Text>
+                                    <Text style={styles.projectStatus}>Estado: Activo</Text>
                                 </View>
                             </View>
-                            <TouchableOpacity onPress={handleEliminarUsuario}>
-                                <Text style={styles.deleteUserText}>Eliminar Usuario</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                </View>
-
-                <View style={styles.projectsSection}>
-                    <View style={styles.addProject}>
-                        <Text style={styles.sectionTitle}>Proyectos del Usuario</Text>
-                        <Image source={require('../../../../assets/mas.png')}
-                            style={styles.add} />
-                    </View>
-                    <View style={styles.projectCard}>
-                        <Text style={styles.projectTitle}>Proyecto: {perfilData?.nombre_proyecto}</Text>
-                        <Text style={styles.projectDesc}>Descripción: {perfilData?.descripcion_proyecto}</Text>
-                        <Text style={styles.projectStatus}>Estado: Activo</Text>
+                        </ScrollView>
                     </View>
                 </View>
-            </View>
-        </View>
+            </AuthProvider>
+        </GestureHandlerRootView>
     )
 };
 
@@ -127,8 +140,9 @@ const styles = StyleSheet.create({
 
     Info: {
         position: 'absolute',
-        top: '20%',
+        top: '15%',
         alignSelf: 'center',
+        height: '100%',
     },
 
     userInfo: {
@@ -136,7 +150,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.7)',
         borderRadius: 5,
-        height: '62%',
+        height: 'auto',
         backgroundColor: 'rgba(0, 10, 17, 0.9)',
     },
 
@@ -192,12 +206,13 @@ const styles = StyleSheet.create({
     },
 
     projectsSection: {
-        padding: 20,
         borderWidth: 2,
+        backgroundColor: 'rgba(0, 10, 17, 0.9)',
         borderColor: 'rgba(255, 255, 255, 0.7)',
+        padding: 20,
         borderRadius: 5,
         top: 20,
-        backgroundColor: 'rgba(0, 10, 17, 0.9)',
+        height: 'auto',
     },
 
     projectCard: {
@@ -251,7 +266,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    
+
     errorText: {
         color: 'red',
         textAlign: 'center',

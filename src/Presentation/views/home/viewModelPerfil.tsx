@@ -24,7 +24,7 @@ const usePerfilViewModel = () => {
             console.log('Respuesta perfil:', response);
 
             if (response.success && response.user && response.user.length > 0) {
-                setPerfilData(response.user);
+                setPerfilData(response.user[0]);
             } else {
                 setErrorMessage(response.message || 'No se encontraron datos del perfil');
             }
