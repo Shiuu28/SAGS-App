@@ -85,6 +85,31 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  async updateChecklistItem(itemId: string, completed: boolean, userEmail: string): Promise<ResponseApiDelivery> {
+    try {
+        const currentList = await AsyncStorage.getItem(`checklist_${userEmail}`);
+        const checklistData = currentList ? JSON.parse(currentList) : [];
+        
+        const updatedList = checklistData.map((item: any) => 
+            item.id === itemId ? { ...item, completed } : item
+        );
+        
+        await AsyncStorage.setItem(`checklist_${userEmail}`, JSON.stringify(updatedList));
+
+        return {
+            success: true,
+            message: "Elemento actualizado exitosamente",
+            user: updatedList
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: 'Error al actualizar el elemento',
+            error
+        };
+    }
+  }
+
   async getDocument(nombreArchivo: string): Promise<Blob> {
     try {
       const response = await ApiDelivery.get(`/documents/${nombreArchivo}`, {

@@ -1,24 +1,23 @@
-import React, { useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, TextInput, Alert, ScrollView } from 'react-native';
 import { RoundedButton } from '../../components/RoundedButton'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../App';
-import { Nav } from '../../components/Nav';
 import useRegisterViewModel from "../../views/register/viewModel";
 import { CustomTextInput } from '../../components/CustomTextInput';
 import useHomeViewModel from '../home/viewModel';
 
 
 export const RegisterScreen = () => {
-    const {logout} = useHomeViewModel();
+    const { logout } = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { email, tipodoc, documento, password, onChange, errorMessage, register } = useRegisterViewModel();
 
     useEffect(() => {
-            if (errorMessage !== '')
-                Alert.alert('Error', errorMessage);
-        }, [errorMessage]
+        if (errorMessage !== '')
+            Alert.alert('Error', errorMessage);
+    }, [errorMessage]
     );
 
     return (
@@ -29,8 +28,6 @@ export const RegisterScreen = () => {
                 source={require('../../../../assets/background.png')}
                 style={styles.imageBackground}
             />
-
-            <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout}></Nav>
 
             <View style={styles.logoContainer}>
                 <Text style={styles.logoText}>¡BIENVENIDO!</Text>
@@ -44,47 +41,52 @@ export const RegisterScreen = () => {
 
 
 
-                        <CustomTextInput
-                            image={require('../../../../assets/avatar.png')}
-                            placeholder='Tipo de documento'
-                            keyboardType='default'
-                            property='tipodoc'
-                            onChangeText={onChange}
-                            value={tipodoc}
-                        />
+                    <CustomTextInput
+                        image={require('../../../../assets/avatar.png')}
+                        placeholder='Tipo de documento'
+                        keyboardType='default'
+                        property='tipodoc'
+                        onChangeText={onChange}
+                        value={tipodoc}
+                    />
 
-                        <CustomTextInput
-                            image={require('../../../../assets/id.png')}
-                            placeholder='Documento (solo números)'
-                            keyboardType='default'
-                            property='documento'
-                            onChangeText={onChange}
-                            value={documento}
-                            
-                        />
+                    <CustomTextInput
+                        image={require('../../../../assets/id.png')}
+                        placeholder='Documento (solo números)'
+                        keyboardType='default'
+                        property='documento'
+                        onChangeText={onChange}
+                        value={documento}
 
-                        <CustomTextInput
-                            image={require('../../../../assets/correo.png')}
-                            placeholder='Correo electrónico'
-                            keyboardType='email-address'
-                            property='email'
-                            onChangeText={onChange}
-                            value={email}
-                        />
+                    />
 
-                        <CustomTextInput
-                            image={require('../../../../assets/password.png')}
-                            placeholder='Contraseña'
-                            keyboardType='default'
-                            secureTextEntry={true}
-                            property='password'
-                            onChangeText={onChange}
-                            value={password}
-                        />
+                    <CustomTextInput
+                        image={require('../../../../assets/correo.png')}
+                        placeholder='Correo electrónico'
+                        keyboardType='email-address'
+                        property='email'
+                        onChangeText={onChange}
+                        value={email}
+                    />
+
+                    <CustomTextInput
+                        image={require('../../../../assets/password.png')}
+                        placeholder='Contraseña'
+                        keyboardType='default'
+                        secureTextEntry={true}
+                        property='password'
+                        onChangeText={onChange}
+                        value={password}
+                    />
 
 
                     <View style={{ marginTop: 30 }}>
-                        <RoundedButton text= 'CONFIRMAR' onPress={() => register()}/>
+                        <RoundedButton text='CONFIRMAR' onPress={async () => {
+                            const result = await register();
+                            if (result && result.success) {
+                                navigation.navigate('HomeScreen');
+                            }
+                        }} />
                     </View>
 
                 </ScrollView>

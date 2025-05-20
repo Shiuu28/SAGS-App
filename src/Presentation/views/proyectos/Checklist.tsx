@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Nav } from '../../components/Nav';
 import { MyColors } from '../../theme/AppTheme';
-import { GetChecklistsUseCase, GetDocumentUseCase } from './checkViewModel';
+import { useChecklistViewModel } from './checkViewModel';
 import { WebView } from 'react-native-webview';
 import { ChecklistEntities } from '../../../Domain/Entities/User';
 import { AuthRepositoryImpl } from '../../../Data/repositories/AuthRepository';
@@ -24,9 +24,7 @@ export const Checklist = () => {
 
     const [checklists, setChecklists] = useState<ChecklistEntities[]>([]);
     const [loading, setLoading] = useState(false);
-    const authRepository = new AuthRepositoryImpl();
-    const getChecklistsUseCase = new GetChecklistsUseCase(authRepository);
-    const getDocumentUseCase = new GetDocumentUseCase(authRepository);
+    const { getUserChecklists, getDocument } = useChecklistViewModel();
 
     useEffect(() => {
         loadChecklists();
@@ -35,12 +33,12 @@ export const Checklist = () => {
     const loadChecklists = async () => {
         setLoading(true);
         try {
-            const result = await getChecklistsUseCase.execute();
+            const result = await getUserChecklists();
 
             if (result.success && result.user) {
                 const checklistsWithChecked = result.user.map(item => ({
                     ...item,
-                    idmod: item.idmod.toString(), // Convertir a string si es necesario
+                    idmod: item.idmod.toString(),
                     nombre: item.nombre || `Documento ${item.idmod}`,
                     descripcion: item.descripcion || 'Sin descripción',
                     checked: false
@@ -59,16 +57,13 @@ export const Checklist = () => {
 
     const handleVerDocumento = async (archivo: string) => {
         try {
-            const blob = await getDocumentUseCase.execute(archivo);
+            const blob = await getDocument(archivo);
             const url = URL.createObjectURL(blob);
 
-            // Actualizar el documento seleccionado para mostrar en el visor
             setSelectedDocument({
                 title: `Documento ${archivo}`,
                 path: url
             });
-
-            
         } catch (error) {
             console.error('Error en el documento:', error);
             Alert.alert('Error', 'No se pudo abrir el documento');

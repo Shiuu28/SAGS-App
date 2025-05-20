@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Image, ActivityIndicator } from 'react-native';
 import { CustomTextInput } from '../../components/CustomTextInput';
 import { RoundedButton } from '../../components/RoundedButton';
 import useEditarPerfilViewModel from './EditarPerfilViewModel';
@@ -10,9 +10,22 @@ import Nav from '../../components/Nav';
 import useHomeViewModel from './viewModel';
 
 export const EditarPerfil = () => {
-    const {logout} = useHomeViewModel();
+    const { logout } = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { nombres, email, funcion, onChange, updatePerfil, errorMessage } = useEditarPerfilViewModel();
+    const [loading, setLoading] = useState(false);
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await updatePerfil();
+            navigation.goBack();
+        } catch (error) {
+            console.error('Error saving profile:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -54,16 +67,19 @@ export const EditarPerfil = () => {
                 />
 
                 <View style={{ marginTop: 60 }}>
-                    <RoundedButton
-                        text='GUARDAR CAMBIOS'
-                        onPress={() => {
-                            updatePerfil();
-                            navigation.goBack();
-                        }}
-                    />
+                    {loading ? (
+                        <ActivityIndicator size="large" color="#3189C5" />
+                    ) : (
+                        <RoundedButton
+                            text='GUARDAR CAMBIOS'
+                            onPress={handleSave}
+                        />
+                    )}
                 </View>
 
-                {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+                {errorMessage && (
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                )}
             </View>
         </View>
     );

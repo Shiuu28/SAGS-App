@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../App';
@@ -21,6 +21,7 @@ export const PQRS = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [showDetail, setShowDetail] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [tipo, setTipo] = useState('');
     const [opinion, setOpinion] = useState('');
@@ -32,51 +33,95 @@ export const PQRS = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
                 const data = await getAllPQRS();
-                setPqrsList(data.map((item: PQRSInterface) => ({
-                    id_opi: item.id,
-                    tipo_opi: item.tipo,
-                    opinion: item.descripcion,
-                    email: item.correo,
-                    calificacion: 0,
-                    fecha: item.fecha || new Date().toISOString().split('T')[0]
-                })));
+                if (data && Array.isArray(data)) {
+                    setPqrsList(data.map((item: PQRSInterface) => ({
+                        id_opi: item.id,
+                        tipo_opi: item.tipo,
+                        opinion: item.descripcion,
+                        email: item.correo,
+                        calificacion: item.calificacion || 0,
+                        fecha: item.fecha || new Date().toISOString().split('T')[0]
+                    })));
+                } else {
+                    Alert.alert('Error', 'No se pudieron cargar los PQRS');
+                }
             } catch (error) {
                 console.error('Error fetching PQRS:', error);
+                Alert.alert('Error', 'Error al cargar los PQRS');
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
     }, []);
 
-    const handleSave = async () => {
-        const pqrsData: PQRSInterface = {
-            nombre: 'Usuario',
-            tipo: tipo,
-            descripcion: opinion,
-            correo: selectedPQRS?.email || 'usuario@demo.com',
-            fecha: new Date().toISOString().split('T')[0]
-        };
-
+    // Actualizar la lista después de cada operación
+    const refreshPQRSList = async () => {
         try {
-            if (selectedPQRS?.id_opi) {
-                await updatePQRS(Number(selectedPQRS.id_opi), pqrsData);
-            } else {
-                await createPQRS(pqrsData);
-            }
-
+            setLoading(true);
             const updatedList = await getAllPQRS();
             const mappedList = updatedList.map(item => ({
                 id_opi: item.id,
                 tipo_opi: item.tipo,
                 opinion: item.descripcion,
                 email: item.correo,
-                calificacion: 0,
+                calificacion: item.calificacion || 0,
                 fecha: item.fecha || new Date().toISOString().split('T')[0]
             }));
             setPqrsList(mappedList);
+        } catch (error) {
+            console.error('Error refreshing PQRS:', error);
+            Alert.alert('Error', 'No se pudo actualizar la lista');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedPQRS) {
+            setTipo(selectedPQRS.tipo_opi);
+            setOpinion(selectedPQRS.opinion);
+            setCalificacion(selectedPQRS.calificacion.toString());
+        } else {
+            setTipo('');
+            setOpinion('');
+            setCalificacion('');
+        }
+    }, [selectedPQRS]);
+
+    const handleSave = async () => {
+        if (!tipo || !opinion) {
+            Alert.alert('Error', 'Por favor complete todos los campos requeridos');
+            return;
+        }
+
+        const pqrsData: PQRSInterface = {
+            nombre: 'Usuario',
+            tipo: tipo,
+            descripcion: opinion,
+            correo: selectedPQRS?.email || 'usuario@demo.com',
+            calificacion: parseInt(calificacion) || 0,
+            fecha: new Date().toISOString().split('T')[0]
+        };
+
+        try {
+            setLoading(true);
+            if (selectedPQRS?.id_opi) {
+                await updatePQRS(Number(selectedPQRS.id_opi), pqrsData);
+            } else {
+                await createPQRS(pqrsData);
+            }
+            await refreshPQRSList();
             setSelectedPQRS(null);
+            setShowEditModal(false);
+            Alert.alert('Éxito', 'PQRS guardada correctamente');
         } catch (error) {
             console.error('Error saving PQRS:', error);
+            Alert.alert('Error', 'No se pudo guardar la PQRS');
+        } finally {
+            setLoading(false);
         }
     };
 

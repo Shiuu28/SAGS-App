@@ -1,43 +1,64 @@
-// src/services/pqrsService.ts
-
 import axios from 'axios';
 
-// URL base de tu backend
-const BASE_URL = 'http://10.0.2.2:5000/api';
+const API_BASE_URL = 'http://10.0.2.2:3000/api';
 
 export interface PQRS {
-  id?: string;
-  nombre: string;
-  correo: string;
-  tipo: string;
-  descripcion: string;
+    id?: string;
+    nombre: string;
+    tipo: string;
+    descripcion: string;
+    correo: string;
+    calificacion?: number;
+    fecha?: string;
 }
 
-// Obtener todas las PQRS
 export const getAllPQRS = async (): Promise<PQRS[]> => {
-  const response = await axios.get(BASE_URL);
-  return response.data;
+    try {
+        const response = await axios.get(`${API_BASE_URL}/pqrs`);
+        if (!response.data) {
+            throw new Error('No data received');
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error en getAllPQRS:', error);
+        throw error;
+    }
 };
 
-// Obtener una PQRS por ID
-export const getPQRSById = async (id: number): Promise<PQRS> => {
-  const response = await axios.get(`${BASE_URL}/${id}`);
-  return response.data;
+export const createPQRS = async (pqrsData: PQRS): Promise<PQRS> => {
+    try {
+        if (!pqrsData.tipo || !pqrsData.descripcion || !pqrsData.correo) {
+            throw new Error('Missing required fields');
+        }
+        const response = await axios.post(`${API_BASE_URL}/pqrs`, pqrsData);
+        return response.data;
+    } catch (error) {
+        console.error('Error al crear PQRS:', error);
+        throw error;
+    }
 };
 
-// Crear una nueva PQRS
-export const createPQRS = async (data: PQRS): Promise<PQRS> => {
-  const response = await axios.post(BASE_URL, data);
-  return response.data;
+export const updatePQRS = async (id: number, pqrsData: PQRS): Promise<PQRS> => {
+    try {
+        if (!id) {
+            throw new Error('ID is required for update');
+        }
+        const response = await axios.put(`${API_BASE_URL}/pqrs/${id}`, pqrsData);
+        return response.data;
+    } catch (error) {
+        console.error('Error al actualizar PQRS:', error);
+        throw error;
+    }
 };
 
-// Actualizar una PQRS existente
-export const updatePQRS = async (id: number, data: PQRS): Promise<PQRS> => {
-  const response = await axios.put(`${BASE_URL}/${id}`, data);
-  return response.data;
-};
-
-// Eliminar una PQRS
 export const deletePQRS = async (id: number): Promise<void> => {
-  await axios.delete(`${BASE_URL}/${id}`);
+    try {
+        if (!id) {
+            throw new Error('ID is required for deletion');
+        }
+        await axios.delete(`${API_BASE_URL}/pqrs/${id}`);
+    } catch (error) {
+        console.error('Error al eliminar PQRS:', error);
+        throw error;
+    }
 };

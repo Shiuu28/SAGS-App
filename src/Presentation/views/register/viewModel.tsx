@@ -20,7 +20,12 @@ const useRegisterViewModel = () => {
         if (isValidForm()) {
             const response = await RegisterAuthUseCase(values);
             console.log('Result' + JSON.stringify(response));
+            if (response.success){
+                Alert.alert('¡Usuario registrado exitosamente!')
+            }
+            return response;
         }
+        return null;
     }
 
     const isValidForm = (): boolean => {

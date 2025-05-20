@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { PerfilEntities } from '../../../Domain/Entities/User';
 import { GetPerfilUseCase } from '../../../Domain/useCases/auth/GetPerfil';
 import { useUserLocal } from '../../hooks/useUserLocal';
+import { DeletePerfilUseCase } from '../../../Domain/useCases/auth/DeletePerfil';
 
 const usePerfilViewModel = () => {
     const [perfilData, setPerfilData] = useState<PerfilEntities | null>(null);
@@ -44,17 +45,24 @@ const usePerfilViewModel = () => {
 
     const eliminarUsuario = async () => {
         try {
+            setLoading(true);
             if (!user?.email) {
                 setErrorMessage('No hay usuario logueado');
-                return;
+                return false;
             }
             
-            const response = await GetPerfilUseCase(user.email);
-            if (!response.success) {
-                setErrorMessage(response.message);
+            const response = await DeletePerfilUseCase(user.email);
+            if (response && response.success) {
+                return true;
             }
+            setErrorMessage(response?.message || 'Error al eliminar el usuario');
+            return false;
         } catch (error) {
+            console.error('Error al eliminar usuario:', error);
             setErrorMessage('Error al eliminar el usuario');
+            return false;
+        } finally {
+            setLoading(false);
         }
     };
 
