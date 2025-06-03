@@ -7,14 +7,12 @@ import { Nav } from '../../components/Nav';
 import { MyColors } from '../../theme/AppTheme';
 import { useChecklistViewModel } from './checkViewModel';
 import { WebView } from 'react-native-webview';
-import { ChecklistEntities } from '../../../Domain/Entities/User';
-import { AuthRepositoryImpl } from '../../../Data/repositories/AuthRepository';
 import useHomeViewModel from '../home/viewModel';
 
 
 
 export const Checklist = () => {
-    const {logout} = useHomeViewModel();
+    const { logout } = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const [selectedDocument, setSelectedDocument] = useState<{
@@ -22,36 +20,26 @@ export const Checklist = () => {
         path: string;
     } | null>(null);
 
-    const [checklists, setChecklists] = useState<ChecklistEntities[]>([]);
-    const [loading, setLoading] = useState(false);
-    const { getUserChecklists, getDocument } = useChecklistViewModel();
+    const { checklists, setChecklists, loading, error, getUserChecklists, getDocument } = useChecklistViewModel();
 
     useEffect(() => {
         loadChecklists();
+        return () => {
+            if (selectedDocument) {
+                URL.revokeObjectURL(selectedDocument.path);
+            }
+        };
     }, []);
 
     const loadChecklists = async () => {
-        setLoading(true);
         try {
             const result = await getUserChecklists();
-
-            if (result.success && result.user) {
-                const checklistsWithChecked = result.user.map(item => ({
-                    ...item,
-                    idmod: item.idmod.toString(),
-                    nombre: item.nombre || `Documento ${item.idmod}`,
-                    descripcion: item.descripcion || 'Sin descripción',
-                    checked: false
-                }));
-                setChecklists(checklistsWithChecked);
-            } else {
-                Alert.alert('Error', result.message || 'No se pudieron cargar los documentos');
+            if (error) {
+                Alert.alert('Error', error);
             }
-        } catch (error) {
-            console.error('Error loading checklists:', error);
+        } catch (err) {
+            console.error('Error loading checklists:', err);
             Alert.alert('Error', 'Ocurrió un error al cargar la lista');
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -102,6 +90,7 @@ export const Checklist = () => {
                                 <Text style={styles.headerCell}>Progreso</Text>
                                 <Text style={styles.headerCell}>Archivo</Text>
                                 <Text style={styles.headerCell}>Fecha</Text>
+                                <Text style={styles.headerCell}>Proyecto</Text>
                             </View>
 
                             {checklists.map((item, index) => (

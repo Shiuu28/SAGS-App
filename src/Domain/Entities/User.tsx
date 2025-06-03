@@ -25,8 +25,16 @@ export interface ChecklistEntities {
 
 export interface PerfilEntities {
     nombres: string;
+    apellidos: string;
     email: string;
     funcion: string;
+    proyectos: Array<{
+    nombre_proyecto: string;
+    descripcion_proyecto: string;
+    }>;
+}
+
+export interface Proyecto {
     nombre_proyecto: string;
     descripcion_proyecto: string;
 }

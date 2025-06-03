@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Nav from '../../components/Nav';
 import usePerfilViewModel from './viewModelPerfil';
 import useHomeViewModel from './viewModel';
-import { AuthContext, AuthProvider } from '../../../Domain/useCases/auth/AuthContext';
+import { AuthContext } from '../../../Domain/useCases/auth/AuthContext';
 import { ScrollView } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -16,7 +16,7 @@ export const PerfilUsu = () => {
     const { user } = useContext(AuthContext);
     const { logout } = useHomeViewModel();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const { perfilData, errorMessage, loading, eliminarUsuario } = usePerfilViewModel();
+    const { perfilData, errorMessage, eliminarUsuario } = usePerfilViewModel();
 
     const handleEliminarUsuario = async () => {
         Alert.alert(
@@ -53,7 +53,7 @@ export const PerfilUsu = () => {
                     style={styles.imageBackground}
                 />
                 <Nav onPress={() => navigation.navigate('HomeScreen')} logout={logout} />
-                
+
                 <View style={styles.Info}>
                     <ScrollView>
                         <View style={styles.userInfo}>
@@ -69,8 +69,8 @@ export const PerfilUsu = () => {
                                     />
                                     <View style={styles.userText}>
                                         <Text style={styles.userDataText}>
-                                            <Text style={styles.bold}>Nombre: {user?.name} </Text>
-                                            {perfilData?.nombres}
+                                            <Text style={styles.bold}>Nombre: </Text>
+                                            {perfilData?.nombres} {perfilData?.apellidos}
                                         </Text>
                                         <Text style={styles.userDataText}>
                                             <Text style={styles.bold}>Correo Electrónico: </Text>
@@ -105,18 +105,28 @@ export const PerfilUsu = () => {
                             <View style={styles.addProject}>
                                 <Text style={styles.sectionTitle}>Proyectos del Usuario</Text>
                                 <TouchableOpacity onPress={() => navigation.navigate('NewProyScreen')}>
-                                    <Image 
+                                    <Image
                                         source={require('../../../../assets/mas.png')}
-                                        style={styles.add} 
+                                        style={styles.add}
                                     />
                                 </TouchableOpacity>
                             </View>
-                            <View style={styles.projectCard}>
-                                <Text style={styles.projectTitle}>Proyecto: {perfilData?.nombre_proyecto}</Text>
-                                <Text style={styles.projectDesc}>Descripción: {perfilData?.descripcion_proyecto}</Text>
-                                <Text style={styles.projectStatus}>Estado: Activo</Text>
-                            </View>
+
+
+                            {perfilData.proyectos.length > 0 ? (
+                                perfilData.proyectos.map((proyecto, index) => (
+                                    <View key={index} style={styles.projectCard}>
+                                        <Text style={styles.projectTitle}>Proyecto: {proyecto.nombre_proyecto || 'Sin nombre'}</Text>
+                                        <Text style={styles.projectDesc}>Descripción: {proyecto.descripcion_proyecto || 'Sin descripción'}</Text>
+                                        <Text style={styles.projectStatus}>Estado: Activo</Text>
+                                    </View>
+                                ))
+                            ) : (
+                                <Text style={styles.projectDesc}>No hay proyectos asignados</Text>
+                            )}
+
                         </View>
+
                     </ScrollView>
                 </View>
             </View>

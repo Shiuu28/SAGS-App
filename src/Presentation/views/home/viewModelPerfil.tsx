@@ -4,8 +4,15 @@ import { GetPerfilUseCase } from '../../../Domain/useCases/auth/GetPerfil';
 import { useUserLocal } from '../../hooks/useUserLocal';
 import { DeletePerfilUseCase } from '../../../Domain/useCases/auth/DeletePerfil';
 
+
 const usePerfilViewModel = () => {
-    const [perfilData, setPerfilData] = useState<PerfilEntities | null>(null);
+    const [perfilData, setPerfilData] = useState<PerfilEntities>({
+        nombres: '',
+        apellidos: '',
+        email: '',
+        funcion: '',
+        proyectos: []
+    });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const { user } = useUserLocal();
@@ -24,14 +31,35 @@ const usePerfilViewModel = () => {
             const response = await GetPerfilUseCase(user.email);
             console.log('Respuesta perfil:', response);
 
-            if (response.success && response.user && response.user.length > 0) {
-                setPerfilData(response.user[0]);
+            if (response.success && response.user) {
+                setPerfilData({
+                    nombres: response.user.nombres || '',
+                    apellidos: response.user.apellidos || '',
+                    email: response.user.email || user.email,
+                    funcion: response.user.funcion || '',
+                    proyectos: response.user.proyectos || []
+                });
+
             } else {
                 setErrorMessage(response.message || 'No se encontraron datos del perfil');
+                setPerfilData({
+                    nombres: '',
+                    apellidos: '',
+                    email: user.email || '',
+                    funcion: '',
+                    proyectos: []
+                });
             }
         } catch (error) {
             console.log('Error al obtener perfil:', error);
             setErrorMessage('Error al cargar los datos del perfil');
+            setPerfilData({
+                nombres: '',
+                apellidos: '',
+                email: user?.email || '',
+                funcion: '',
+                proyectos: []
+            });
         } finally {
             setLoading(false);
         }
@@ -50,7 +78,7 @@ const usePerfilViewModel = () => {
                 setErrorMessage('No hay usuario logueado');
                 return false;
             }
-            
+
             const response = await DeletePerfilUseCase(user.email);
             if (response && response.success) {
                 return true;

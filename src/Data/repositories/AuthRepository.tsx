@@ -66,7 +66,7 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  async getChecklists(): Promise<ResponseApiDelivery> {
+  async getChecklists(userEmail?: string | undefined): Promise<ResponseApiDelivery> {
     try {
       const response = await ApiDelivery.get<ResponseApiDelivery>('/check');
       return {
