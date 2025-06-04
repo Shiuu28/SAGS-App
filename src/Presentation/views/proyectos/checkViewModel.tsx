@@ -1,39 +1,19 @@
 import { useState } from 'react';
 import { AuthRepositoryImpl } from '../../../Data/repositories/AuthRepository';
 import { useUserLocal } from '../../hooks/useUserLocal';
+import { DocumentPreview } from '../../../Domain/Entities/User';
+import { ChecklistItem } from '../../../Domain/Entities/User';
+import { ChecklistResponse } from '../../../Domain/Entities/User';
 
-// Tipos
-export interface ChecklistItem {
-  idmod: number | string;
-  nombre: string;
-  descripcion: string;
-  progreso: number;
-  archivo: string;
-  fecha: string;
-  userEmail: string;
-  checked?: boolean;
-}
-
-export interface DocumentPreview {
-  title: string;
-  path: string;
-}
-
-export interface ChecklistResponse {
-  success: boolean;
-  user?: ChecklistItem[];
-  message?: string;
-  error?: unknown;
-}
 
 // Casos de uso
 class GetChecklistsUseCase {
-  constructor(private repository: AuthRepositoryImpl) {}
+  constructor(private repository: AuthRepositoryImpl) { }
 
   async execute(userEmail?: string): Promise<ChecklistResponse> {
     try {
       const response = await this.repository.getChecklists(userEmail);
-      
+
       return {
         success: response.success,
         user: response.user,
@@ -51,7 +31,7 @@ class GetChecklistsUseCase {
 }
 
 class GetDocumentUseCase {
-  constructor(private repository: AuthRepositoryImpl) {}
+  constructor(private repository: AuthRepositoryImpl) { }
 
   async execute(nombreArchivo: string): Promise<Blob> {
     try {
@@ -70,41 +50,40 @@ export const useChecklistViewModel = () => {
   const [error, setError] = useState<string | null>(null);
   const [checklists, setChecklists] = useState<ChecklistItem[]>([]);
   const [documentPreview, setDocumentPreview] = useState<DocumentPreview | null>(null);
-  
+
   const authRepository = new AuthRepositoryImpl();
   const getChecklistsUC = new GetChecklistsUseCase(authRepository);
   const getDocumentUC = new GetDocumentUseCase(authRepository);
 
-   const getUserChecklists = async (): Promise<ChecklistResponse> => {
+  const getUserChecklists = async (): Promise<ChecklistResponse> => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const result = await getChecklistsUC.execute(user?.email);
-      
+
       if (result.success && result.user) {
-        const formattedChecklists = result.user.map(item => ({
-          ...item,
+        const formattedChecklists: ChecklistItem[] = result.user.map(item => ({
           idmod: item.idmod?.toString() || '0',
           nombre: item.nombre || `Documento ${item.idmod || '0'}`,
           descripcion: item.descripcion || 'Sin descripción',
-          checked: false,
-          // Asegurar que todos los campos requeridos tengan valor
-          progreso: item.progreso || 0,
+          progreso: Number(item.progreso) || 0, 
           archivo: item.archivo || '',
           fecha: item.fecha || 'N/A',
-          userEmail: item.userEmail || user?.email || ''
+          userEmail: item.userEmail || user?.email || '',
+          idproy: Number(item.idproy),
+          checked: false
         }));
-        
+
         setChecklists(formattedChecklists);
-        
+
         return {
           success: true,
           user: formattedChecklists,
           message: result.message
         };
       }
-      
+
       setError(result.message || 'Error al cargar checklists');
       return result;
     } catch (err) {
@@ -127,7 +106,7 @@ export const useChecklistViewModel = () => {
 
     setLoading(true);
     setError(null);
-    
+
     try {
       return await getDocumentUC.execute(fileName);
     } catch (err) {

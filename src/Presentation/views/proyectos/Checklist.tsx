@@ -121,6 +121,8 @@ export const Checklist = () => {
                                         </TouchableOpacity>
                                     </View>
                                     <Text style={styles.cell}>{item.fecha || 'N/A'}</Text>
+                                    <Text style={styles.cell}>{item.idproy}</Text>
+
                                 </View>
                             ))}
                         </View>
