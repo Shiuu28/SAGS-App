@@ -1,304 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal, Dimensions, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { PQRS } from '../../../Domain/Entities/User';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../../App';
-import { getAllPQRS, createPQRS, deletePQRS, updatePQRS } from './services/pqrsService';
-import { PQRS as PQRSInterface } from './services/pqrsService';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from './types/navigation';
+import Nav from '../../components/Nav';
+import useHomeViewModel from '../home/viewModel';
 
 
-// Actualizar la interfaz para que coincida
-type PQRSItem = {
-    id_opi?: string;
-    tipo_opi: string;    // cambiado de tipo
-    opinion: string;     // cambiado de descripcion
-    email: string;       // cambiado de correo
-    calificacion: number;
-    fecha?: string;
-};
 
-export const PQRS = () => {
+const API_URL = 'http://10.0.2.2:8000/api';
+
+export const PQRSScreen = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const [showDetail, setShowDetail] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const [tipo, setTipo] = useState('');
-    const [opinion, setOpinion] = useState('');
-    const [calificacion, setCalificacion] = useState('');
-
-    const [selectedPQRS, setSelectedPQRS] = useState<PQRSItem | null>(null);
-    const [pqrsList, setPqrsList] = useState<PQRSItem[]>([]);
+    const { logout } = useHomeViewModel();
+    const [pqrs, setPqrs] = useState<PQRS[]>([]);
+    const [searchText, setSearchText] = useState('');
+    const [filterType, setFilterType] = useState('all');
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const data = await getAllPQRS();
-                if (data && Array.isArray(data)) {
-                    setPqrsList(data.map((item: PQRSInterface) => ({
-                        id_opi: item.id,
-                        tipo_opi: item.tipo,
-                        opinion: item.descripcion,
-                        email: item.correo,
-                        calificacion: item.calificacion || 0,
-                        fecha: item.fecha || new Date().toISOString().split('T')[0]
-                    })));
-                } else {
-                    Alert.alert('Error', 'No se pudieron cargar los PQRS');
-                }
-            } catch (error) {
-                console.error('Error fetching PQRS:', error);
-                Alert.alert('Error', 'Error al cargar los PQRS');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        cargarPQRS();
     }, []);
 
-    // Actualizar la lista después de cada operación
-    const refreshPQRSList = async () => {
+    async function cargarPQRS() {
         try {
-            setLoading(true);
-            const updatedList = await getAllPQRS();
-            const mappedList = updatedList.map(item => ({
-                id_opi: item.id,
-                tipo_opi: item.tipo,
-                opinion: item.descripcion,
-                email: item.correo,
-                calificacion: item.calificacion || 0,
-                fecha: item.fecha || new Date().toISOString().split('T')[0]
-            }));
-            setPqrsList(mappedList);
+            const response = await fetch(`${API_URL}/pqrs`);
+            const data = await response.json();
+            setPqrs(data);
         } catch (error) {
-            console.error('Error refreshing PQRS:', error);
-            Alert.alert('Error', 'No se pudo actualizar la lista');
-        } finally {
-            setLoading(false);
+            Alert.alert('Error', 'Error cargando PQRS');
+            console.error('Error cargando PQRS:', error);
         }
-    };
+    }
 
-    useEffect(() => {
-        if (selectedPQRS) {
-            setTipo(selectedPQRS.tipo_opi);
-            setOpinion(selectedPQRS.opinion);
-            setCalificacion(selectedPQRS.calificacion.toString());
-        } else {
-            setTipo('');
-            setOpinion('');
-            setCalificacion('');
-        }
-    }, [selectedPQRS]);
+    const filteredPQRS = pqrs.filter(item => {
+        const matchesSearch = item.email.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.opinion.toLowerCase().includes(searchText.toLowerCase());
+        const matchesType = filterType === 'all' || item.tipo_opi === filterType;
+        return matchesSearch && matchesType;
+    });
 
-    const handleSave = async () => {
-        if (!tipo || !opinion) {
-            Alert.alert('Error', 'Por favor complete todos los campos requeridos');
-            return;
-        }
-
-        const pqrsData: PQRSInterface = {
-            nombre: 'Usuario',
-            tipo: tipo,
-            descripcion: opinion,
-            correo: selectedPQRS?.email || 'usuario@demo.com',
-            calificacion: parseInt(calificacion) || 0,
-            fecha: new Date().toISOString().split('T')[0]
+    const getBadgeStyle = (tipo: string) => {
+        const colors = {
+            'Sugerencia': '#28a745',
+            'Queja': '#dc3545',
+            'Petición': '#007bff',
+            'Reclamo': '#ffc107'
         };
-
-        try {
-            setLoading(true);
-            if (selectedPQRS?.id_opi) {
-                await updatePQRS(Number(selectedPQRS.id_opi), pqrsData);
-            } else {
-                await createPQRS(pqrsData);
-            }
-            await refreshPQRSList();
-            setSelectedPQRS(null);
-            setShowEditModal(false);
-            Alert.alert('Éxito', 'PQRS guardada correctamente');
-        } catch (error) {
-            console.error('Error saving PQRS:', error);
-            Alert.alert('Error', 'No se pudo guardar la PQRS');
-        } finally {
-            setLoading(false);
-        }
+        return { backgroundColor: colors[tipo as keyof typeof colors] || '#6c757d' };
     };
-
-
-
-    const PQRSDetail = () => (
-        <View style={styles.detailContainer}>
-            <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                    <View style={styles.userInfo}>
-                        <View style={styles.avatar}>
-                            <Text style={styles.avatarText}>LS</Text>
-                        </View>
-                        <Text style={styles.email}>{selectedPQRS?.email}</Text>
-                    </View>
-                    <View style={styles.priorityBadge}>
-                        <Text style={styles.priorityText}>
-                            Prioridad: {selectedPQRS?.calificacion}/5
-                        </Text>
-                    </View>
-                </View>
-
-                <View style={styles.cardContent}>
-                    <View style={styles.typeBadge}>
-                        <Text style={styles.typeText}>{selectedPQRS?.tipo_opi}</Text>
-                    </View>
-                    <Text style={styles.description}>{selectedPQRS?.opinion}</Text>
-                </View>
-
-                <View style={styles.cardFooter}>
-                    <TouchableOpacity
-                        style={styles.backButton}
-                        onPress={() => setShowDetail(false)}
-                    >
-                        <Text style={styles.buttonText}>Volver a la lista</Text>
-                    </TouchableOpacity>
-                    <View style={styles.actionButtons}>
-                        <TouchableOpacity
-                            style={styles.editButton}
-                            onPress={() => setShowEditModal(true)}
-                        >
-                            <Text style={styles.buttonText}>Editar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.deleteButton}
-                            onPress={async () => {
-                                if (selectedPQRS) {
-                                    await deletePQRS(Number(selectedPQRS.id_opi));
-                                    const updatedList = await getAllPQRS();
-                                    const mappedList = updatedList.map(item => ({
-                                        id_opi: item.id,
-                                        tipo_opi: item.tipo,
-                                        opinion: item.descripcion,
-                                        email: item.correo,
-                                        calificacion: 0,
-                                        fecha: item.fecha || new Date().toISOString().split('T')[0]
-                                    }));
-                                    setPqrsList(mappedList);
-                                    setSelectedPQRS(null);
-                                    setShowDetail(false);
-                                }
-                            }}
-                        >
-                            <Text style={styles.buttonText}>Eliminar</Text>
-                        </TouchableOpacity>
-
-                    </View>
-                </View>
-            </View>
-        </View>
-    );
-
-    const PQRSList = () => (
-        <ScrollView style={styles.listContainer}>
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => setShowEditModal(true)}
-            >
-                <Text style={styles.addButtonText}>Nueva PQRS</Text>
-            </TouchableOpacity>
-
-            {/* Sample PQRS Item */}
-            {pqrsList.map((item) => (
-                <TouchableOpacity
-                    key={item.id_opi}
-                    style={styles.pqrsItem}
-                    onPress={() => {
-                        setSelectedPQRS(item);
-                        setShowDetail(true);
-                    }}
-                >
-                    <View style={styles.pqrsHeader}>
-                        <Text style={styles.pqrsType}>{item.tipo_opi}</Text>
-                        <Text style={styles.pqrsDate}>{item.fecha}</Text>
-                    </View>
-                    <Text style={styles.pqrsDescription} numberOfLines={2}>
-                        {item.opinion}
-                    </Text>
-                    <View style={styles.pqrsFooter}>
-                        <Text style={styles.pqrsEmail}>{item.email}</Text>
-                        <Text style={styles.pqrsPriority}>Prioridad: {item.calificacion}/5</Text>
-                    </View>
-                </TouchableOpacity>
-            ))}
-
-        </ScrollView>
-    );
-
-    const EditModal = () => (
-        <Modal
-            visible={showEditModal}
-            animationType="slide"
-            transparent={true}
-        >
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>
-                        {selectedPQRS ? 'Editar PQRS' : 'Nueva PQRS'}
-                    </Text>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>Tipo de PQRS:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={tipo}
-                            onChangeText={setTipo}
-                            placeholder="Seleccione tipo"
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>Descripción:</Text>
-                        <TextInput
-                            style={[styles.input, styles.textArea]}
-                            value={opinion}
-                            onChangeText={setOpinion}
-                            multiline
-                            numberOfLines={4}
-                            placeholder="Escriba su PQRS"
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>Prioridad:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={calificacion}
-                            onChangeText={setCalificacion}
-                            placeholder="Seleccione prioridad"
-                        />
-                    </View>
-
-                    <View style={styles.modalButtons}>
-                        <TouchableOpacity
-                            style={styles.cancelButton}
-                            onPress={() => setShowEditModal(false)}
-                        >
-                            <Text style={styles.buttonText}>Cancelar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.saveButton}
-                            onPress={() => {
-                                handleSave();
-                                setShowEditModal(false)
-                            }}>
-                            <Text style={styles.buttonText}>Guardar</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        </Modal >
-    );
 
     return (
         <View style={styles.container}>
-            {showDetail ? <PQRSDetail /> : <PQRSList />}
-            <EditModal />
+            <Image
+                source={require('../../../../assets/background.png')}
+                style={styles.imageBackground}
+            />
+
+            <Nav onPress={() => navigation.navigate('Proyectos')} logout={logout}></Nav>
+
+            <Text style={styles.title}>Sistema de PQRS</Text>
+            <TextInput
+                style={styles.searchInput}
+                placeholder="Buscar por correo o contenido..."
+                value={searchText}
+                onChangeText={setSearchText}
+            />
+            <Picker
+                selectedValue={filterType}
+                onValueChange={(value) => setFilterType(value)}
+                style={styles.picker}
+            >
+                <Picker.Item label="Todos los tipos" value="all" />
+                <Picker.Item label="Sugerencias" value="Sugerencia" />
+                <Picker.Item label="Quejas" value="Queja" />
+                <Picker.Item label="Peticiones" value="Petición" />
+                <Picker.Item label="Reclamos" value="Reclamo" />
+            </Picker>
+
+            <ScrollView style={styles.scrollView}>
+                {filteredPQRS.map((item) => (
+                    <View key={item.id_opi} style={styles.card}>
+                        <View style={styles.cardContent}>
+                            <View style={styles.cardHeader}>
+                                <View style={styles.userInfo}>
+                                    <View style={styles.avatar}>
+                                        <Image
+                                            source={require('../../../../assets/avatar.png')}
+                                            style={styles.avatarImage}
+                                        />
+                                    </View>
+                                    <View style={styles.userDetails}>
+                                        <Text style={styles.email}>{item.email}</Text>
+                                    </View>
+                                </View>
+                                <View style={[styles.badge, getBadgeStyle(item.tipo_opi)]}>
+                                    <Text style={styles.badgeText}>{item.tipo_opi}</Text>
+                                </View>
+                            </View>
+
+                            <Text style={styles.cardDescription}>{item.opinion}</Text>
+
+                            <View style={styles.cardFooter}>
+                                <Text style={styles.priorityText}>
+                                    Prioridad: {item.calificacion}/5
+                                </Text>
+                                <TouchableOpacity
+                                    style={styles.detailsButton}
+                                    onPress={() => navigation.navigate('pqrs_detail', { id: item.id_opi })}
+                                >
+                                    <Text style={styles.detailsButtonText}>Ver detalles</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                ))}
+            </ScrollView>
+
+            <TouchableOpacity
+                style={styles.createButton}
+                onPress={() => navigation.navigate('CreatePQRS')}
+            >
+                <Text style={styles.createButtonText}>Crear nueva PQRS</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -306,195 +131,115 @@ export const PQRS = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
-    },
-    listContainer: {
-        flex: 1,
         padding: 16,
+        backgroundColor: '#000A11',
     },
-    detailContainer: {
-        flex: 1,
-        padding: 16,
+
+    imageBackground: {
+        width: '100%',
+        height: '110%',
     },
-    addButton: {
-        backgroundColor: '#3b82f6',
-        padding: 16,
-        borderRadius: 8,
-        marginBottom: 16,
-        alignItems: 'center',
-    },
-    addButtonText: {
-        color: '#fff',
-        fontSize: 16,
+    title: {
+        fontSize: 24,
         fontWeight: 'bold',
+        marginBottom: 16
     },
-    pqrsItem: {
-        backgroundColor: '#fff',
-        padding: 16,
+    searchInput: {
+        borderWidth: 1,
+        borderColor: '#ddd',
         borderRadius: 8,
-        marginBottom: 12,
-        elevation: 2,
+        padding: 8,
+        marginBottom: 16
     },
-    pqrsHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 8,
+    picker: {
+        marginBottom: 16
     },
-    pqrsType: {
-        color: '#3b82f6',
-        fontWeight: 'bold',
-    },
-    pqrsDate: {
-        color: '#64748b',
-    },
-    pqrsDescription: {
-        color: '#1f2937',
-        marginBottom: 8,
-    },
-    pqrsFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    pqrsEmail: {
-        color: '#64748b',
-    },
-    pqrsPriority: {
-        color: '#64748b',
+    scrollView: {
+        flex: 1
     },
     card: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        marginBottom: 16,
         backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 16,
-        elevation: 3,
+        elevation: 2
+    },
+    cardContent: {
+        padding: 16
     },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 12
     },
     userInfo: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     avatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#3b82f6',
-        justifyContent: 'center',
-        alignItems: 'center',
+        width: 50,
+        height: 50,
+        borderRadius: 25,
         marginRight: 12,
+        overflow: 'hidden'
     },
-    avatarText: {
-        color: '#fff',
-        fontWeight: 'bold',
+    avatarImage: {
+        width: '100%',
+        height: '100%'
+    },
+    userDetails: {
+        justifyContent: 'center'
     },
     email: {
-        color: '#1f2937',
+        fontSize: 16,
+        fontWeight: '500'
     },
-    priorityBadge: {
-        backgroundColor: '#dbeafe',
+    badge: {
         padding: 8,
-        borderRadius: 16,
+        borderRadius: 4
     },
-    priorityText: {
-        color: '#3b82f6',
+    badgeText: {
+        color: '#fff',
+        fontWeight: 'bold'
     },
-    cardContent: {
-        marginBottom: 16,
-    },
-    typeBadge: {
-        backgroundColor: '#f3f4f6',
-        padding: 8,
-        borderRadius: 8,
-        alignSelf: 'flex-start',
-        marginBottom: 8,
-    },
-    typeText: {
-        color: '#1f2937',
-    },
-    description: {
-        color: '#4b5563',
-        lineHeight: 24,
+    cardDescription: {
+        fontSize: 14,
+        color: '#333',
+        marginVertical: 12,
+        lineHeight: 20
     },
     cardFooter: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-    },
-    backButton: {
-        backgroundColor: '#6b7280',
-        padding: 12,
-        borderRadius: 8,
-    },
-    actionButtons: {
-        flexDirection: 'row',
-    },
-    editButton: {
-        backgroundColor: '#3b82f6',
-        padding: 12,
-        borderRadius: 8,
-        marginRight: 8,
-    },
-    deleteButton: {
-        backgroundColor: '#ef4444',
-        padding: 12,
-        borderRadius: 8,
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        marginTop: 12
     },
-    modalContent: {
-        backgroundColor: '#fff',
-        padding: 24,
-        borderRadius: 12,
-        width: Dimensions.get('window').width * 0.9,
+    priorityText: {
+        fontSize: 14,
+        color: '#666'
     },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: '#1f2937',
+    detailsButton: {
+        backgroundColor: '#007AFF',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 4
     },
-    inputContainer: {
-        marginBottom: 16,
+    detailsButtonText: {
+        color: '#fff',
+        fontWeight: '500'
     },
-    inputLabel: {
-        color: '#4b5563',
-        marginBottom: 8,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#d1d5db',
+    createButton: {
+        backgroundColor: '#007AFF',
+        padding: 16,
         borderRadius: 8,
-        padding: 12,
+        alignItems: 'center',
+        marginTop: 16
     },
-    textArea: {
-        height: 100,
-        textAlignVertical: 'top',
-    },
-    modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        marginTop: 16,
-    },
-    cancelButton: {
-        backgroundColor: '#6b7280',
-        padding: 12,
-        borderRadius: 8,
-        marginRight: 8,
-    },
-    saveButton: {
-        backgroundColor: '#3b82f6',
-        padding: 12,
-        borderRadius: 8,
-    },
+    createButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold'
+    }
 });
-

@@ -62,3 +62,12 @@ export interface Proyecto {
     nombre_proyecto: string;
     descripcion_proyecto: string;
 }
+
+export interface PQRS {
+    id_opi: number;
+    email: string;
+    tipo_opi: 'Petición' | 'Queja' | 'Reclamo' | 'Sugerencia';
+    opinion: string;
+    calificacion: number;
+}
+

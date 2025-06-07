@@ -20,7 +20,7 @@ export const Nav = ({ onPress, logout }: ImageProps) => {
         { id: "2", label: "Perfil", action: () => navigation.navigate("PerfilUsu")},        
         { id: "3", label: "Gestión de Proyectos", action: () => navigation.navigate("Proyectos")},
         { id: "4", label: "Sobre Nosotros", action: () => navigation.navigate("SobreNosotros")},
-        { id: "5", label: "PQRS", action: () => navigation.navigate("PQRS")},
+        { id: "5", label: "PQRS", action: () => navigation.navigate("PQRSScreen")},
         { id: "6", label: "Cerrar sesión", action: () => logout() }
     ];
 

@@ -9,7 +9,7 @@ import { SobreNosotros } from './src/Presentation/views/SobreNosotros/SobreNosot
 import { PerfilUsu } from './src/Presentation/views/home/PerfilUsu';
 import { Checklist } from './src/Presentation/views/proyectos/Checklist';
 import { EditarPerfil } from './src/Presentation/views/home/EditarPerfil';
-import { PQRS } from './src/Presentation/views/Api/pqrs';
+import { PQRSScreen } from './src/Presentation/views/Api/pqrs';
 import { AuthProvider } from './src/Domain/useCases/auth/AuthContext';
 
 export type RootStackParamList = {
@@ -21,7 +21,7 @@ export type RootStackParamList = {
   PerfilUsu: undefined;
   Checklist: undefined;
   EditarPerfil: undefined;
-  PQRS: undefined;
+  PQRSScreen: undefined;
 }
 
 
@@ -76,12 +76,11 @@ const App = () => {
         />
 
         <Stack.Screen
-          name="PQRS"
-          component={PQRS}
+          name="PQRSScreen"
+          component={PQRSScreen}
         />
 
 
-        { /*<Stack.Screen name="Profile" component={ProfileScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
     </AuthProvider>

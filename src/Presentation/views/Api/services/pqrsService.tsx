@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://10.0.2.2:3000/api';
+const API_BASE_URL = 'http://10.0.2.2:5000/api/pqrs'; 
 
 export interface PQRS {
     id?: string;
@@ -14,7 +14,7 @@ export interface PQRS {
 
 export const getAllPQRS = async (): Promise<PQRS[]> => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/pqrs`);
+        const response = await axios.get(`${API_BASE_URL}`);
         if (!response.data) {
             throw new Error('No data received');
         }
