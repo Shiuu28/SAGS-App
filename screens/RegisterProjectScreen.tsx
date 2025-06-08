@@ -7,6 +7,10 @@ import type { StackNavigationProp } from "@react-navigation/stack"
 import type { RootStackParamList } from "../App"
 import { Ionicons } from "@expo/vector-icons"
 import { Picker } from "@react-native-picker/picker"
+import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
+import { useTheme } from '../context/ThemeContext';
+import { GradientBackground } from "../components/GradientBackground"
+
 
 type RegisterProjectScreenNavigationProp = StackNavigationProp<RootStackParamList, "RegisterProject">
 
@@ -15,6 +19,8 @@ interface Props {
 }
 
 export default function RegisterProjectScreen({ navigation }: Props) {
+  const { colors, isDark } = useTheme()
+
   const [projectName, setProjectName] = useState("")
   const [description, setDescription] = useState("")
   const [projectType, setProjectType] = useState("web")
@@ -36,7 +42,8 @@ export default function RegisterProjectScreen({ navigation }: Props) {
   }
 
   return (
-    <LinearGradient colors={["#000a11", "#001122", "#000a11"]} style={styles.container}>
+    <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+      <HeaderWithDrawer navigation={navigation} currentRoute="RegisterProject" />
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
           <Text style={styles.title}>Registrar Proyecto</Text>
@@ -134,7 +141,7 @@ export default function RegisterProjectScreen({ navigation }: Props) {
           </View>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </GradientBackground>
   )
 }
 

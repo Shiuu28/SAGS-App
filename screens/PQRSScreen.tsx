@@ -5,6 +5,17 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, A
 import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
 import { Picker } from "@react-native-picker/picker"
+import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
+import { StackNavigationProp } from "@react-navigation/stack"
+import { RootStackParamList } from "../App"
+import { useTheme } from "../context/ThemeContext"
+import { GradientBackground } from "../components/GradientBackground"
+
+type PQRSProp = StackNavigationProp<RootStackParamList, "PQRS">
+
+interface Props {
+  navigation: PQRSProp
+}
 
 interface PQRS {
   id: string
@@ -16,7 +27,8 @@ interface PQRS {
   status: "pending" | "in-progress" | "resolved"
 }
 
-export default function PQRSScreen() {
+export default function PQRSScreen({ navigation } : Props) {
+  const {colors, isDark} = useTheme()
   const [modalVisible, setModalVisible] = useState(false)
   const [pqrsType, setPqrsType] = useState<PQRS["type"]>("Petición")
   const [description, setDescription] = useState("")
@@ -164,7 +176,8 @@ export default function PQRSScreen() {
   )
 
   return (
-    <LinearGradient colors={["#000a11", "#001122", "#000a11"]} style={styles.container}>
+    <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+      <HeaderWithDrawer navigation={navigation} currentRoute="PQRS"/>
       <View style={styles.header}>
         <Text style={styles.title}>Sistema de PQRS</Text>
         <Text style={styles.subtitle}>Peticiones, Quejas, Reclamos y Sugerencias</Text>
@@ -269,7 +282,7 @@ export default function PQRSScreen() {
           </View>
         </View>
       </Modal>
-    </LinearGradient>
+    </GradientBackground>
   )
 }
 

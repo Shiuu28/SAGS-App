@@ -8,6 +8,9 @@ import type { RouteProp } from "@react-navigation/native"
 import type { RootStackParamList } from "../App"
 import { Ionicons } from "@expo/vector-icons"
 import { Picker } from "@react-native-picker/picker"
+import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
+import { useTheme } from "../context/ThemeContext"
+import { GradientBackground } from "../components/GradientBackground"
 
 type TasksScreenNavigationProp = StackNavigationProp<RootStackParamList, "Tasks">
 type TasksScreenRouteProp = RouteProp<RootStackParamList, "Tasks">
@@ -29,6 +32,7 @@ interface Task {
 }
 
 export default function TasksScreen({ navigation, route }: Props) {
+  const {colors, isDark} = useTheme()
   const { projectId } = route.params
   const [modalVisible, setModalVisible] = useState(false)
   const [taskTitle, setTaskTitle] = useState("")
@@ -195,7 +199,8 @@ export default function TasksScreen({ navigation, route }: Props) {
   )
 
   return (
-    <LinearGradient colors={["#000a11", "#001122", "#000a11"]} style={styles.container}>
+    <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+      <HeaderWithDrawer navigation={navigation} currentRoute="Tasks"/>
       <View style={styles.header}>
         <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
           <Ionicons name="add" size={24} color="#fff" />
@@ -297,7 +302,7 @@ export default function TasksScreen({ navigation, route }: Props) {
           </View>
         </View>
       </Modal>
-    </LinearGradient>
+    </GradientBackground>
   )
 }
 

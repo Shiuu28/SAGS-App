@@ -7,6 +7,7 @@ import type { StackNavigationProp } from "@react-navigation/stack"
 import type { RootStackParamList } from "../App"
 import { useTheme } from "../context/ThemeContext"
 import { GradientBackground } from "../components/GradientBackground"
+import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, "Profile">
 
@@ -73,6 +74,7 @@ export default function ProfileScreen({ navigation }: Props) {
 
   return (
     <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+      <HeaderWithDrawer navigation={navigation} currentRoute="Profile"/>
       <ScrollView style={styles.scrollView}>
         {/* User Info Section */}
         <View style={[styles.userInfoSection, { borderBottomColor: colors.border }]}>

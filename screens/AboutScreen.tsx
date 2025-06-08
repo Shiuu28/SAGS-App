@@ -1,25 +1,37 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Linking } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
+import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
+import { StackNavigationProp } from "@react-navigation/stack"
+import { RootStackParamList } from "../App"
+import { useTheme } from "../context/ThemeContext"
+import { GradientBackground } from "../components/GradientBackground"
 
-export default function AboutScreen() {
+type AboutScreenProp = StackNavigationProp<RootStackParamList, "About">
+
+interface Props {
+  navigation: AboutScreenProp
+}
+
+export default function AboutScreen({ navigation }: Props) {
+  const {colors, isDark} = useTheme()
   const teamMembers = [
     {
       name: "María José Romero",
       role: "Analista",
-      image: "https://via.placeholder.com/150",
+      image: "https://avatars.githubusercontent.com/u/162388929?v=4",
       github: "https://github.com/majoromero2006",
     },
     {
       name: "Santiago Cárdenas Hernández",
       role: "Analista",
-      image: "https://via.placeholder.com/150",
+      image: "https://avatars.githubusercontent.com/u/162388929?v=4",
       github: "https://github.com/SantiagoC18",
     },
     {
       name: "Shiuu Valenzuela Penagos",
       role: "Analista",
-      image: "https://via.placeholder.com/150",
+      image: "https://avatars.githubusercontent.com/u/162388929?v=4",
       github: "https://github.com/Shiuu28",
     },
   ]
@@ -50,7 +62,8 @@ export default function AboutScreen() {
   }
 
   return (
-    <LinearGradient colors={["#000a11", "#001122", "#000a11"]} style={styles.container}>
+    <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+      <HeaderWithDrawer navigation={navigation} currentRoute="About"/>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <View style={styles.header}>
@@ -133,7 +146,7 @@ export default function AboutScreen() {
                 style={[styles.socialButton, { backgroundColor: link.color }]}
                 onPress={() => handleOpenLink(link.url)}
               >
-                <Ionicons name={link.icon as any} size={24} color="#fff" />
+                <Ionicons name={link.icon as any} size={14} color="#fff" />
                 <Text style={styles.socialButtonText}>{link.name}</Text>
               </TouchableOpacity>
             ))}
@@ -149,11 +162,11 @@ export default function AboutScreen() {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>© 2024 SAGS. Todos los derechos reservados.</Text>
+          <Text style={styles.footerText}>© 2025 SAGS. Todos los derechos reservados.</Text>
           <Text style={styles.footerSubtext}>Desarrollado con ❤️ para optimizar el desarrollo de software</Text>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </GradientBackground>
   )
 }
 

@@ -6,6 +6,9 @@ import { LinearGradient } from "expo-linear-gradient"
 import type { StackNavigationProp } from "@react-navigation/stack"
 import type { RootStackParamList } from "../App"
 import { Ionicons } from "@expo/vector-icons"
+import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
+import { GradientBackground } from "../components/GradientBackground"
+import { useTheme } from "../context/ThemeContext"
 
 type ProjectsScreenNavigationProp = StackNavigationProp<RootStackParamList, "Projects">
 
@@ -25,6 +28,8 @@ interface Project {
 }
 
 export default function ProjectsScreen({ navigation }: Props) {
+  const {colors, isDark} = useTheme()
+
   const [viewMode, setViewMode] = useState<"developer" | "admin">("developer")
 
   const projects: Project[] = [
@@ -138,7 +143,8 @@ export default function ProjectsScreen({ navigation }: Props) {
   )
 
   return (
-    <LinearGradient colors={["#000a11", "#001122", "#000a11"]} style={styles.container}>
+    <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+      <HeaderWithDrawer navigation={navigation} currentRoute="Projects"/>
       <View style={styles.header}>
         <View style={styles.viewToggle}>
           <TouchableOpacity
@@ -172,7 +178,7 @@ export default function ProjectsScreen({ navigation }: Props) {
         contentContainerStyle={styles.projectsList}
         showsVerticalScrollIndicator={false}
       />
-    </LinearGradient>
+    </GradientBackground>
   )
 }
 

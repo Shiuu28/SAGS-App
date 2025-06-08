@@ -7,6 +7,9 @@ import type { StackNavigationProp } from "@react-navigation/stack"
 import type { RouteProp } from "@react-navigation/native"
 import type { RootStackParamList } from "../App"
 import { Ionicons } from "@expo/vector-icons"
+import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
+import { GradientBackground } from "../components/GradientBackground"
+import { useTheme } from "../context/ThemeContext"
 
 type SprintsScreenNavigationProp = StackNavigationProp<RootStackParamList, "Sprints">
 type SprintsScreenRouteProp = RouteProp<RootStackParamList, "Sprints">
@@ -27,6 +30,7 @@ interface Sprint {
 }
 
 export default function SprintsScreen({ navigation, route }: Props) {
+  const {colors, isDark} = useTheme()
   const { projectId } = route.params
   const [modalVisible, setModalVisible] = useState(false)
   const [sprintName, setSprintName] = useState("")
@@ -157,7 +161,8 @@ export default function SprintsScreen({ navigation, route }: Props) {
   )
 
   return (
-    <LinearGradient colors={["#000a11", "#001122", "#000a11"]} style={styles.container}>
+    <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+     <HeaderWithDrawer navigation={navigation} currentRoute="Sprints"/>
       <View style={styles.header}>
         <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
           <Ionicons name="add" size={24} color="#fff" />
@@ -238,7 +243,7 @@ export default function SprintsScreen({ navigation, route }: Props) {
           </View>
         </View>
       </Modal>
-    </LinearGradient>
+    </GradientBackground>
   )
 }
 
