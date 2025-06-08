@@ -1,6 +1,6 @@
 "use client"
-
-import { useState } from "react";
+import { obtenerDatosProtegidos } from "../token/service";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -19,6 +19,8 @@ import { GradientBackground } from "../components/GradientBackground"
 import { Logo } from "../components/Logo"
 import { ThemeToggle } from "../components/ThemeToggle"
 import { useTheme } from "../context/ThemeContext"
+import useHomeViewModel from "../viewModel/loginViewModel";
+import useRegisterViewModel from "../viewModel/registerViewModel";
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, "Login">
 
@@ -29,40 +31,55 @@ interface Props {
 export default function LoginScreen({ navigation }: Props) {
   const { colors, isDark } = useTheme()
   const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [documento, setDocumento] = useState("")
-  const [tipoDoc, setTipoDoc] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Por favor complete todos los campos", [], {
-        userInterfaceStyle: isDark ? "dark" : "light",
-      })
-      return
+  
+  const loginViewModel = useHomeViewModel();
+  const registerViewModel = useRegisterViewModel();
+  
+  // (login o registro)
+  const email = isLogin ? loginViewModel.email : registerViewModel.email;
+  const password = isLogin ? loginViewModel.password : registerViewModel.password;
+  const errorMessage = isLogin ? loginViewModel.errorMessage : registerViewModel.errorMessage;
+  
+  const handleChange = (field: string, value: string) => {
+    if (isLogin) {
+      loginViewModel.onChange(field, value);
+    } else {
+      registerViewModel.onChange(field, value);
     }
-    navigation.replace("Home")
-  }
+  };
 
-  const handleRegister = () => {
-    if (!email || !password || !documento || !tipoDoc) {
-      Alert.alert("Error", "Por favor complete todos los campos", [], {
-        userInterfaceStyle: isDark ? "dark" : "light",
-      })
-      return
+  const handleLogin = async () => {
+    try {
+      await loginViewModel.login();
+      const data = await obtenerDatosProtegidos();
+      console.log("Datos protegidos:", data);
+    } catch (err) {
+      console.error("Error:", err);
     }
-    Alert.alert("Éxito", "Usuario registrado correctamente", [], {
-      userInterfaceStyle: isDark ? "dark" : "light",
-    })
-    setIsLogin(true)
-  }
+  };
+
+  const handleRegister = async () => {
+    try {
+      const response = await registerViewModel.register();
+      if (response && response.success) {
+        setIsLogin(true); 
+      }
+    } catch (err) {
+      console.error("Error en registro:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (errorMessage !== '') {
+        Alert.alert('Error', errorMessage);
+    }
+  }, [errorMessage]);
 
   return (
     <GradientBackground>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-          {/* Header with theme toggle */}
           <View style={styles.headerControls}>
             <View style={styles.placeholder} />
             <ThemeToggle />
@@ -105,8 +122,8 @@ export default function LoginScreen({ navigation }: Props) {
                     style={[styles.input, { color: colors.text }]}
                     placeholder="Tipo de Documento (C.C., T.I.)"
                     placeholderTextColor={colors.textSecondary}
-                    value={tipoDoc}
-                    onChangeText={setTipoDoc}
+                    value={registerViewModel.tipodoc}
+                    onChangeText={(text) => handleChange('tipodoc', text)}
                   />
                 </View>
                 <View style={[styles.inputContainer, { borderColor: colors.border }]}>
@@ -115,8 +132,8 @@ export default function LoginScreen({ navigation }: Props) {
                     style={[styles.input, { color: colors.text }]}
                     placeholder="Número de Documento"
                     placeholderTextColor={colors.textSecondary}
-                    value={documento}
-                    onChangeText={setDocumento}
+                    value={registerViewModel.documento}
+                    onChangeText={(text) => handleChange('documento', text)}
                     keyboardType="numeric"
                   />
                 </View>
@@ -130,7 +147,7 @@ export default function LoginScreen({ navigation }: Props) {
                 placeholder="Email"
                 placeholderTextColor={colors.textSecondary}
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => handleChange('email', text)}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -144,7 +161,7 @@ export default function LoginScreen({ navigation }: Props) {
                 placeholder="Contraseña"
                 placeholderTextColor={colors.textSecondary}
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => handleChange('password', text)}
                 secureTextEntry={!showPassword}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
