@@ -1,8 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
 import type { StackNavigationProp } from "@react-navigation/stack"
 import type { RootStackParamList } from "../App"
 import { Ionicons } from "@expo/vector-icons"
@@ -10,7 +9,7 @@ import { Picker } from "@react-native-picker/picker"
 import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
 import { useTheme } from '../context/ThemeContext';
 import { GradientBackground } from "../components/GradientBackground"
-
+import useRegisterProyViewModel from "../viewModel/registerProyViewModel"
 
 type RegisterProjectScreenNavigationProp = StackNavigationProp<RootStackParamList, "RegisterProject">
 
@@ -21,24 +20,21 @@ interface Props {
 export default function RegisterProjectScreen({ navigation }: Props) {
   const { colors, isDark } = useTheme()
 
-  const [projectName, setProjectName] = useState("")
-  const [description, setDescription] = useState("")
-  const [projectType, setProjectType] = useState("web")
-  const [startDate, setStartDate] = useState("")
+  const { nombre, descripcion, tipo, fechaI, onChange, errorMessage, RegisterProy } = useRegisterProyViewModel();
+
+  useEffect(() => {
+    if (errorMessage !== '')
+      Alert.alert('Error', errorMessage);
+  }, [errorMessage]);
 
   const handleRegisterProject = () => {
-    if (!projectName || !description || !startDate) {
+    if (!nombre || !descripcion || !fechaI) {
       Alert.alert("Error", "Por favor complete todos los campos")
       return
     }
 
-    // Simulate project registration
-    Alert.alert("Éxito", "Proyecto registrado correctamente", [
-      {
-        text: "OK",
-        onPress: () => navigation.navigate("Projects"),
-      },
-    ])
+    RegisterProy();
+    Alert.alert("Proyecto registrado exitosamente")
   }
 
   return (
@@ -57,8 +53,8 @@ export default function RegisterProjectScreen({ navigation }: Props) {
               style={styles.input}
               placeholder="Ingrese el nombre del proyecto"
               placeholderTextColor="#666"
-              value={projectName}
-              onChangeText={setProjectName}
+              value={nombre}
+              onChangeText={(text) => onChange('nombre', text)}
             />
           </View>
 
@@ -68,8 +64,8 @@ export default function RegisterProjectScreen({ navigation }: Props) {
               style={[styles.input, styles.textArea]}
               placeholder="Descripción detallada del proyecto"
               placeholderTextColor="#666"
-              value={description}
-              onChangeText={setDescription}
+              value={descripcion}
+              onChangeText={(text) => onChange('descripcion', text)}
               multiline
               numberOfLines={4}
             />
@@ -78,7 +74,7 @@ export default function RegisterProjectScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Tipo de Aplicativo</Text>
             <View style={styles.pickerContainer}>
-              <Picker selectedValue={projectType} onValueChange={setProjectType} style={styles.picker}>
+              <Picker selectedValue={tipo} onValueChange={(value) => onChange('tipo', value)} style={styles.picker}>
                 <Picker.Item label="Aplicativo Web" value="web" />
                 <Picker.Item label="Aplicativo Móvil" value="mobile" />
                 <Picker.Item label="Aplicativo de Escritorio" value="desktop" />
@@ -88,13 +84,13 @@ export default function RegisterProjectScreen({ navigation }: Props) {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Fecha de Inicio</Text>
+            <Text style={styles.label}>Fecha de Registro</Text>
             <TextInput
               style={styles.input}
-              placeholder="YYYY-MM-DD"
+              placeholder="DD/MM/YYYY"
               placeholderTextColor="#666"
-              value={startDate}
-              onChangeText={setStartDate}
+              value={fechaI}
+              onChangeText={(text) => onChange('fechaI', text)}
             />
           </View>
 
@@ -104,7 +100,6 @@ export default function RegisterProjectScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
-        {/* Project Benefits */}
         <View style={styles.benefitsContainer}>
           <Text style={styles.benefitsTitle}>Beneficios de SAGS</Text>
 

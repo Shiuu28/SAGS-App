@@ -13,15 +13,15 @@ const useRegisterProyViewModel = () => {
     });
 
     const onChange = (property: string, value: any) => {
-        setValues({...values, [property]: value});
+        setValues({ ...values, [property]: value });
     };
 
     const RegisterProy = async () => {
-        
+
         if (isValidForm()) {
             try {
                 const result = await RegisterProyAuthUseCase(values);
-    
+
                 if (result.success) {
                     Alert.alert('Proyecto registrado exitosamente');
                 }
@@ -46,11 +46,15 @@ const useRegisterProyViewModel = () => {
             return false;
         }
         if (values.fechaI === '') {
-            setErrorMessage('Debe seleccionar la fecha');
+            setErrorMessage('La fecha es requerida');
             return false;
         }
-        
-       
+        const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+        if (!dateRegex.test(values.fechaI)) {
+            setErrorMessage('Formato de fecha inválido. Use DD/MM/YYYY');
+            return false;
+        }
+
         return true;
     }
 
@@ -58,7 +62,7 @@ const useRegisterProyViewModel = () => {
         ...values,
         onChange,
         RegisterProy,
-        errorMessage, 
+        errorMessage,
         setErrorMessage
     };
 };

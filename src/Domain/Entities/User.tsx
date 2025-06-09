@@ -51,6 +51,8 @@ export interface PerfilEntities {
     nombres: string;
     apellidos: string;
     email: string;
+    documento: string;
+    telefono: string;
     funcion: string;
     proyectos: Array<{
         nombre_proyecto: string;

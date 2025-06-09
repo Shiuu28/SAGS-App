@@ -33,14 +33,19 @@ export default function LoginScreen({ navigation }: Props) {
   const [isLogin, setIsLogin] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   
+  // Siempre llamamos a ambos hooks, independientemente del estado
   const loginViewModel = useHomeViewModel();
   const registerViewModel = useRegisterViewModel();
   
-  // (login o registro)
-  const email = isLogin ? loginViewModel.email : registerViewModel.email;
-  const password = isLogin ? loginViewModel.password : registerViewModel.password;
-  const errorMessage = isLogin ? loginViewModel.errorMessage : registerViewModel.errorMessage;
-  
+  // Manejamos los efectos secundarios para los mensajes de error
+  useEffect(() => {
+    // Solo mostramos el mensaje de error del viewModel activo
+    const activeErrorMessage = isLogin ? loginViewModel.errorMessage : registerViewModel.errorMessage;
+    if (activeErrorMessage !== '') {
+      Alert.alert('Error', activeErrorMessage);
+    }
+  }, [isLogin, loginViewModel.errorMessage, registerViewModel.errorMessage]);
+
   const handleChange = (field: string, value: string) => {
     if (isLogin) {
       loginViewModel.onChange(field, value);
@@ -69,12 +74,6 @@ export default function LoginScreen({ navigation }: Props) {
       console.error("Error en registro:", err);
     }
   };
-
-  useEffect(() => {
-    if (errorMessage !== '') {
-        Alert.alert('Error', errorMessage);
-    }
-  }, [errorMessage]);
 
   return (
     <GradientBackground>
@@ -146,7 +145,7 @@ export default function LoginScreen({ navigation }: Props) {
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Email"
                 placeholderTextColor={colors.textSecondary}
-                value={email}
+                value={isLogin ? loginViewModel.email : registerViewModel.email}
                 onChangeText={(text) => handleChange('email', text)}
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -160,7 +159,7 @@ export default function LoginScreen({ navigation }: Props) {
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Contraseña"
                 placeholderTextColor={colors.textSecondary}
-                value={password}
+                value={isLogin ? loginViewModel.password : registerViewModel.password}
                 onChangeText={(text) => handleChange('password', text)}
                 secureTextEntry={!showPassword}
               />

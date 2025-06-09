@@ -11,6 +11,8 @@ const usePerfilViewModel = () => {
         apellidos: '',
         email: '',
         funcion: '',
+        documento: '',
+        telefono: '',
         proyectos: []
     });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -37,6 +39,8 @@ const usePerfilViewModel = () => {
                     apellidos: response.user.apellidos || '',
                     email: response.user.email || user.email,
                     funcion: response.user.funcion || '',
+                    documento: response.user.documento || '',
+                    telefono: response.user.telefono || '',
                     proyectos: response.user.proyectos || []
                 });
 
@@ -47,6 +51,8 @@ const usePerfilViewModel = () => {
                     apellidos: '',
                     email: user.email || '',
                     funcion: '',
+                    documento: '',
+                    telefono: '',
                     proyectos: []
                 });
             }
@@ -58,6 +64,8 @@ const usePerfilViewModel = () => {
                 apellidos: '',
                 email: user?.email || '',
                 funcion: '',
+                documento: '',
+                telefono: '',
                 proyectos: []
             });
         } finally {
@@ -96,6 +104,7 @@ const usePerfilViewModel = () => {
 
     return {
         perfilData,
+        setPerfilData,
         errorMessage,
         loading,
         getPerfilInfo,

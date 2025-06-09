@@ -8,6 +8,7 @@ import type { RootStackParamList } from "../App"
 import { useTheme } from "../context/ThemeContext"
 import { GradientBackground } from "../components/GradientBackground"
 import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
+import usePerfilViewModel from "../viewModel/perfilViewModel"
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, "Profile">
 
@@ -19,37 +20,44 @@ export default function ProfileScreen({ navigation }: Props) {
   const { colors, isDark } = useTheme()
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [passwordModalVisible, setPasswordModalVisible] = useState(false)
-  const [userInfo, setUserInfo] = useState({
-    name: "Juan Pérez",
-    email: "juan.perez@email.com",
-    document: "12345678",
-    phone: "3001234567",
-    role: "Desarrollador",
-  })
-  const [editForm, setEditForm] = useState({ ...userInfo })
+  const { perfilData, errorMessage, eliminarUsuario } = usePerfilViewModel();
+
+  const [editForm, setEditForm] = useState({ ...perfilData }) 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   })
 
-  const userProjects = [
-    {
-      id: "1",
-      name: "Sistema de Gestión Hospitalaria",
-      description: "Desarrollo de sistema para gestión de pacientes",
-      status: "En progreso",
-    },
-    {
-      id: "2",
-      name: "E-commerce Platform",
-      description: "Plataforma de comercio electrónico",
-      status: "Completado",
-    },
-  ]
+
+  const handleEliminarUsuario = async () => {
+    Alert.alert(
+      'Confirmar eliminación',
+      '¿Está seguro que desea eliminar su cuenta? Esta acción no se puede deshacer.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            const success = await eliminarUsuario();
+            if (success) {
+              Alert.alert('Éxito', 'Usuario eliminado correctamente');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }]
+              });
+            } else {
+              Alert.alert('Error', errorMessage || 'No se pudo eliminar el usuario');
+            }
+          }
+        }
+      ]
+    );
+  };
 
   const handleUpdateProfile = () => {
-    setUserInfo({ ...editForm })
+    setPerfilData:({ ...editForm })
     setEditModalVisible(false)
     Alert.alert("Éxito", "Perfil actualizado correctamente")
   }
@@ -74,7 +82,7 @@ export default function ProfileScreen({ navigation }: Props) {
 
   return (
     <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
-      <HeaderWithDrawer navigation={navigation} currentRoute="Profile"/>
+      <HeaderWithDrawer navigation={navigation} currentRoute="Profile" />
       <ScrollView style={styles.scrollView}>
         {/* User Info Section */}
         <View style={[styles.userInfoSection, { borderBottomColor: colors.border }]}>
@@ -88,15 +96,15 @@ export default function ProfileScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
 
-          <Text style={[styles.userName, { color: colors.text }]}>{userInfo.name}</Text>
-          <Text style={[styles.userEmail, { color: colors.info }]}>{userInfo.email}</Text>
-          <Text style={[styles.userRole, { color: colors.textSecondary }]}>{userInfo.role}</Text>
+          <Text style={[styles.userName, { color: colors.text }]}>{perfilData?.nombres} {perfilData?.apellidos} </Text>
+          <Text style={[styles.userEmail, { color: colors.info }]}>{perfilData?.email}</Text>
+          <Text style={[styles.userRole, { color: colors.textSecondary }]}>{perfilData?.funcion}</Text>
 
           <View style={styles.userActions}>
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: colors.primary }]}
               onPress={() => {
-                setEditForm({ ...userInfo })
+                setEditForm({ ...perfilData })
                 setEditModalVisible(true)
               }}
             >
@@ -120,12 +128,12 @@ export default function ProfileScreen({ navigation }: Props) {
 
           <View style={styles.detailItem}>
             <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Documento:</Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>{userInfo.document}</Text>
+            <Text style={[styles.detailValue, { color: colors.text }]}>{perfilData?.documento}</Text>
           </View>
 
           <View style={styles.detailItem}>
             <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Teléfono:</Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>{userInfo.phone}</Text>
+            <Text style={[styles.detailValue, { color: colors.text }]}>{perfilData?.telefono}</Text>
           </View>
         </View>
 
@@ -133,22 +141,22 @@ export default function ProfileScreen({ navigation }: Props) {
         <View style={styles.projectsSection}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Mis Proyectos</Text>
 
-          {userProjects.map((project) => (
+          {perfilData.proyectos.map((project, index) => (
             <View
-              key={project.id}
+              key={index}
               style={[styles.projectCard, { backgroundColor: colors.card, borderColor: colors.border }]}
             >
-              <Text style={[styles.projectName, { color: colors.text }]}>{project.name}</Text>
-              <Text style={[styles.projectDescription, { color: colors.textSecondary }]}>{project.description}</Text>
+              <Text style={[styles.projectName, { color: colors.text }]}>{project.nombre_proyecto}</Text>
+              <Text style={[styles.projectDescription, { color: colors.textSecondary }]}>{project.descripcion_proyecto}</Text>
               <View style={styles.projectFooter}>
-                <Text style={[styles.projectStatus, { color: colors.success }]}>Estado: {project.status}</Text>
+                <Text style={[styles.projectStatus, { color: colors.success }]}>Estado: { }</Text>
                 <TouchableOpacity
                   style={[styles.viewProjectButton, { backgroundColor: colors.primary }]}
                   onPress={() =>
                     navigation.navigate("Checklist", {
-                      projectId: project.id,
-                      projectName: project.name,
-                      projectType: project.description,
+                      index: project,
+                      projectName: project.nombre_proyecto,
+                      projectType: project.descripcion_proyecto,
                     })
                   }
                 >
@@ -183,8 +191,8 @@ export default function ProfileScreen({ navigation }: Props) {
               ]}
               placeholder="Nombre completo"
               placeholderTextColor={colors.textTertiary}
-              value={editForm.name}
-              onChangeText={(text) => setEditForm({ ...editForm, name: text })}
+              value={editForm.nombres}
+              onChangeText={(text) => setEditForm({ ...editForm, nombres: text })}
             />
 
             <TextInput
@@ -206,8 +214,8 @@ export default function ProfileScreen({ navigation }: Props) {
               ]}
               placeholder="Documento"
               placeholderTextColor={colors.textTertiary}
-              value={editForm.document}
-              onChangeText={(text) => setEditForm({ ...editForm, document: text })}
+              value={editForm.documento}
+              onChangeText={(text) => setEditForm({ ...editForm, documento: text })}
             />
 
             <TextInput
@@ -217,8 +225,8 @@ export default function ProfileScreen({ navigation }: Props) {
               ]}
               placeholder="Teléfono"
               placeholderTextColor={colors.textTertiary}
-              value={editForm.phone}
-              onChangeText={(text) => setEditForm({ ...editForm, phone: text })}
+              value={editForm.telefono}
+              onChangeText={(text) => setEditForm({ ...editForm, telefono: text })}
               keyboardType="phone-pad"
             />
 
