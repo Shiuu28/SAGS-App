@@ -63,7 +63,22 @@ export default function PQRSScreen({ navigation }: Props) {
 
     async function loadPQRS() {
         try {
-            const response = await fetch(`${API_URL}/pqrs`);
+            const token = await getToken();
+            if (!token) {
+                console.log('No hay token disponible');
+                return;
+            }
+            
+            const response = await fetch(`${API_URL}/pqrs`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            
             const data = await response.json();
             setPqrsList(data);
         } catch (error) {
@@ -95,7 +110,12 @@ export default function PQRSScreen({ navigation }: Props) {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(pqrsData)
+                body: JSON.stringify({
+                    opinion: pqrsData.opinion,
+                    calificacion: pqrsData.calificacion,
+                    tipo_opi: pqrsData.tipo_opi,
+                    user_id: pqrsData.email // Cambiado de email a user_id para coincidir con el backend
+                })
             });
 
             if (!response.ok) {
@@ -122,11 +142,17 @@ export default function PQRSScreen({ navigation }: Props) {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(pqrsData)
+                body: JSON.stringify({
+                    opinion: pqrsData.opinion,
+                    calificacion: pqrsData.calificacion,
+                    tipo_opi: pqrsData.tipo_opi,
+                    user_id: userEmail // Añadimos el email del usuario como user_id
+                })
             });
 
             if (!response.ok) {
-                throw new Error('Error al actualizar PQRS');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error al actualizar PQRS');
             }
 
             return await response.json();
@@ -146,12 +172,17 @@ export default function PQRSScreen({ navigation }: Props) {
             const response = await fetch(`${API_URL}/pqrs/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: userEmail // Añadimos el email del usuario para verificación
+                })
             });
 
             if (!response.ok) {
-                throw new Error('Error al eliminar PQRS');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error al eliminar PQRS');
             }
         } catch (error) {
             console.error('Error al eliminar PQRS:', error);
@@ -211,13 +242,12 @@ export default function PQRSScreen({ navigation }: Props) {
             setLoading(true)
 
             // Crear el objeto PQRS con los datos del formulario
-            const newPQRS: PQRSItem = {
-                id_opi: 0,
+            const newPQRS = {
                 tipo_opi: pqrsType,
                 opinion: description.trim(),
                 calificacion: priority,
-                email: userEmail,
-            }
+                email: userEmail, // Mantenemos email en el objeto local
+            };
 
             // Usar la función createPQRS definida anteriormente
             const response = await createPQRS(newPQRS);
@@ -304,8 +334,8 @@ export default function PQRSScreen({ navigation }: Props) {
     };
 
     const filteredPQRS = pqrsList.filter((item) => {
-        const matchesSearch = item.email.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.opinion.toLowerCase().includes(searchText.toLowerCase());
+        const matchesSearch = (item.email?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
+            (item.opinion?.toLowerCase() || '').includes(searchText.toLowerCase());
         const matchesType = filterType === 'all' || item.tipo_opi === filterType;
         return matchesSearch && matchesType;
     })
@@ -424,13 +454,15 @@ export default function PQRSScreen({ navigation }: Props) {
                 animationType="slide"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={resetModal}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Crear nueva PQRS</Text>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <Text style={styles.modalTitle}>
+                                {editingPQRS ? 'Editar PQRS' : 'Crear nueva PQRS'}
+                            </Text>
+                            <TouchableOpacity onPress={resetModal}>
                                 <Ionicons name="close" size={24} color="#fff" />
                             </TouchableOpacity>
                         </View>
@@ -466,21 +498,32 @@ export default function PQRSScreen({ navigation }: Props) {
                             </Picker>
                         </View>
 
-                        <View style={styles.modalActions}>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.cancelButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.modalButtonText}>Cancelar</Text>
-                            </TouchableOpacity>
+                    </View>
+                    <View style={styles.modalActions}>
+                        <TouchableOpacity
+                            style={[styles.modalButton, styles.cancelButton]}
+                            onPress={resetModal}
+                        >
+                            <Text style={styles.modalButtonText}>Cancelar</Text>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity style={[styles.modalButton, styles.createModalButton]} onPress={handleCreatePQRS}>
-                                <Text style={styles.modalButtonText}>Enviar PQRS</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity
+                            style={[styles.modalButton, styles.createModalButton]}
+                            onPress={editingPQRS ? handleUpdatePQRS : handleCreatePQRS}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.modalButtonText}>
+                                    {editingPQRS ? 'Actualizar' : 'Enviar'} PQRS
+                                </Text>
+                            )}
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
+
             {/* Modal de confirmación para eliminar */}
             <Modal
                 animationType="fade"
