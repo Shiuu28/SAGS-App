@@ -11,6 +11,7 @@ import { useTheme } from "../../context/ThemeContext"
 import { GradientBackground } from "../../components/GradientBackground"
 import { useUserLocal } from "../../src/Hooks/useUserLocal"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import axios from 'axios';
 
 
 type PQRSProp = StackNavigationProp<RootStackParamList, "PQRS">
@@ -29,6 +30,24 @@ interface PQRSItem {
 
 const API_URL = 'http://10.0.2.2:8000/api';
 
+// Crear una instancia de Axios específica para PQRS
+const PQRSApi = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+
+// Agregar interceptor para el token
+PQRSApi.interceptors.request.use(async (config) => {
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
 
 export default function PQRSScreen({ navigation }: Props) {
     const { colors, isDark } = useTheme()
@@ -49,7 +68,6 @@ export default function PQRSScreen({ navigation }: Props) {
     const [pqrsList, setPqrsList] = useState<PQRSItem[]>([])
 
     useEffect(() => {
-        loadPQRS();
         // Obtener la sesión del usuario al cargar el componente
         getUserSession();
     }, []);
@@ -58,38 +76,45 @@ export default function PQRSScreen({ navigation }: Props) {
     useEffect(() => {
         if (user && user.email) {
             setUserEmail(user.email);
+            // Cargar los PQRS cuando tengamos el email del usuario
+            loadPQRS();
         }
     }, [user]);
 
-    async function loadPQRS() {
+    // Función para cargar los PQRS desde el servidor
+    const loadPQRS = async () => {
         try {
+            setLoading(true);
             const token = await getToken();
             if (!token) {
                 console.log('No hay token disponible');
+                Alert.alert("Error", "No se pudo autenticar. Por favor inicie sesión nuevamente.");
+                // Opcional: redirigir al usuario a la pantalla de login
+                // navigation.navigate('Login');
                 return;
             }
-            
-            const response = await fetch(`${API_URL}/pqrs`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            setPqrsList(data);
+
+            // Usar la instancia de Axios que ya tienes configurada
+            const response = await PQRSApi.get('/pqrs');
+            setPqrsList(response.data);
         } catch (error) {
-            Alert.alert('Error', 'Error cargando PQRS');
-            console.error('Error cargando PQRS:', error);
+            console.error('Error al cargar PQRS:', error);
+            Alert.alert("Error", "No se pudieron cargar los PQRS. Intente nuevamente.");
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
+
 
     const getToken = async () => {
         try {
-            const token = await AsyncStorage.getItem('userToken');
+            // Cambiar 'userToken' a 'token' para coincidir con AuthRepository.tsx
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.log('No hay token disponible');
+                return null;
+            }
             return token;
         } catch (error) {
             console.error('Error al obtener token:', error);
@@ -97,6 +122,7 @@ export default function PQRSScreen({ navigation }: Props) {
         }
     };
 
+    // Y luego reemplazar los fetch por PQRSApi
     const createPQRS = async (pqrsData: Omit<PQRSItem, 'id_opi'>): Promise<PQRSItem> => {
         try {
             const token = await getToken();
@@ -104,25 +130,14 @@ export default function PQRSScreen({ navigation }: Props) {
                 throw new Error('Usuario no autenticado');
             }
 
-            const response = await fetch(`${API_URL}/pqrs`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    opinion: pqrsData.opinion,
-                    calificacion: pqrsData.calificacion,
-                    tipo_opi: pqrsData.tipo_opi,
-                    user_id: pqrsData.email // Cambiado de email a user_id para coincidir con el backend
-                })
+            const response = await PQRSApi.post('/pqrs', {
+                opinion: pqrsData.opinion,
+                calificacion: pqrsData.calificacion,
+                tipo_opi: pqrsData.tipo_opi,
+                email: pqrsData.email
             });
 
-            if (!response.ok) {
-                throw new Error('Error al crear PQRS');
-            }
-
-            return await response.json();
+            return response.data;
         } catch (error) {
             console.error('Error al crear PQRS:', error);
             throw error;
@@ -146,7 +161,7 @@ export default function PQRSScreen({ navigation }: Props) {
                     opinion: pqrsData.opinion,
                     calificacion: pqrsData.calificacion,
                     tipo_opi: pqrsData.tipo_opi,
-                    user_id: userEmail // Añadimos el email del usuario como user_id
+                    email: userEmail // Enviar email directamente
                 })
             });
 
@@ -176,7 +191,7 @@ export default function PQRSScreen({ navigation }: Props) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    user_id: userEmail // Añadimos el email del usuario para verificación
+                    email: userEmail // Enviar email directamente
                 })
             });
 
@@ -237,7 +252,10 @@ export default function PQRSScreen({ navigation }: Props) {
             Alert.alert("Error", "Por favor ingrese una descripción")
             return
         }
-
+        if (!userEmail) {
+            Alert.alert("Error", "No se pudo obtener el email del usuario");
+            return;
+        }
         try {
             setLoading(true)
 
@@ -251,7 +269,7 @@ export default function PQRSScreen({ navigation }: Props) {
 
             // Usar la función createPQRS definida anteriormente
             const response = await createPQRS(newPQRS);
-
+            await createPQRS(newPQRS);
             // Actualizar la lista con el nuevo PQRS
             setPqrsList([response, ...pqrsList])
             setModalVisible(false)
