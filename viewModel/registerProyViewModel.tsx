@@ -49,9 +49,9 @@ const useRegisterProyViewModel = () => {
             setErrorMessage('La fecha es requerida');
             return false;
         }
-        const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+        const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
         if (!dateRegex.test(values.fechaI)) {
-            setErrorMessage('Formato de fecha inválido. Use DD/MM/YYYY');
+            setErrorMessage('Formato de fecha inválido. Use YYYY/MM/DD');
             return false;
         }
 

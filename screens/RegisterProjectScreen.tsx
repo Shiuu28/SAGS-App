@@ -87,7 +87,7 @@ export default function RegisterProjectScreen({ navigation }: Props) {
             <Text style={styles.label}>Fecha de Registro</Text>
             <TextInput
               style={styles.input}
-              placeholder="DD/MM/YYYY"
+              placeholder="YYYY/MM/DD"
               placeholderTextColor="#666"
               value={fechaI}
               onChangeText={(text) => onChange('fechaI', text)}
