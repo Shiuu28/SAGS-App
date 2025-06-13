@@ -105,8 +105,6 @@ export default function PQRSScreen({ navigation }: Props) {
         }
     };
 
-
-
     const getToken = async () => {
         try {
             // Cambiar 'userToken' a 'token' para coincidir con AuthRepository.tsx
