@@ -1,6 +1,7 @@
+
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal, Alert, Image } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import type { StackNavigationProp } from "@react-navigation/stack"
@@ -9,6 +10,8 @@ import { useTheme } from "../context/ThemeContext"
 import { GradientBackground } from "../components/GradientBackground"
 import { HeaderWithDrawer } from "../components/HeaderWithDrawer"
 import usePerfilViewModel from "../viewModel/perfilViewModel"
+import useEditarPerfilViewModel from "../viewModel/editarPerfilViewModel"
+import { PerfilEntities } from "../src/Domain/Entities/User"
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, "Profile">
 
@@ -20,9 +23,32 @@ export default function ProfileScreen({ navigation }: Props) {
   const { colors, isDark } = useTheme()
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [passwordModalVisible, setPasswordModalVisible] = useState(false)
-  const { perfilData, errorMessage, eliminarUsuario } = usePerfilViewModel();
+  const { perfilData, errorMessage, eliminarUsuario, getPerfilInfo } = usePerfilViewModel();
+  const { updatePerfil, errorMessage: editErrorMessage, isLoading: editLoading } = useEditarPerfilViewModel();
 
-  const [editForm, setEditForm] = useState({ ...perfilData }) 
+  const [editForm, setEditForm] = useState<PerfilEntities>({
+    nombres: '',
+    apellidos: '',
+    email: '',
+    funcion: '',
+    documento: '',
+    telefono: '',
+    proyectos: []
+  })
+  
+  // Sincronizar editForm con perfilData cuando cambie
+  useEffect(() => {
+    setEditForm({
+      nombres: perfilData.nombres || '',
+      apellidos: perfilData.apellidos || '',
+      email: perfilData.email || '',
+      funcion: perfilData.funcion || '',
+      documento: perfilData.documento || '',
+      telefono: perfilData.telefono || '',
+      proyectos: perfilData.proyectos || []
+    });
+  }, [perfilData]);
+
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -56,11 +82,31 @@ export default function ProfileScreen({ navigation }: Props) {
     );
   };
 
-  const handleUpdateProfile = () => {
-    setPerfilData:({ ...editForm })
-    setEditModalVisible(false)
-    Alert.alert("Éxito", "Perfil actualizado correctamente")
-  }
+  const handleUpdateProfile = async () => {
+    try {
+        const success = await updatePerfil(editForm);
+        
+        if (success) {
+            setEditModalVisible(false);
+            Alert.alert("Éxito", "Perfil actualizado correctamente");
+            
+            // Esperar un momento antes de refrescar para dar tiempo al servidor
+            setTimeout(async () => {
+                try {
+                    await getPerfilInfo();
+                } catch (refreshError) {
+                    console.warn('Error al refrescar perfil después de actualización:', refreshError);
+                    // No mostrar error al usuario ya que la actualización fue exitosa
+                }
+            }, 1000);
+        } else {
+            Alert.alert("Error", editErrorMessage || "No se pudo actualizar el perfil");
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        Alert.alert("Error", "Ocurrió un error al actualizar el perfil");
+    }
+}
 
   const handleChangePassword = () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -80,6 +126,36 @@ export default function ProfileScreen({ navigation }: Props) {
     Alert.alert("Éxito", "Contraseña actualizada correctamente")
   }
 
+  // Mostrar loading durante la actualización
+  if (editLoading) {
+    return (
+      <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+        <HeaderWithDrawer navigation={navigation} currentRoute="Profile" />
+        <View style={styles.loadingContainer}>
+          <Text style={[styles.loadingText, { color: colors.text }]}>Actualizando perfil...</Text>
+        </View>
+      </GradientBackground>
+    )
+  }
+
+  // Mostrar error si hay problemas
+  if (errorMessage) {
+    return (
+      <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
+        <HeaderWithDrawer navigation={navigation} currentRoute="Profile" />
+        <View style={styles.errorContainer}>
+          <Text style={[styles.errorText, { color: colors.error }]}>{errorMessage}</Text>
+          <TouchableOpacity 
+            style={[styles.retryButton, { backgroundColor: colors.primary }]}
+            onPress={getPerfilInfo}
+          >
+            <Text style={[styles.retryButtonText, { color: colors.primaryText }]}>Reintentar</Text>
+          </TouchableOpacity>
+        </View>
+      </GradientBackground>
+    )
+  }
+
   return (
     <GradientBackground variant={isDark ? "surface" : "primary"} style={styles.container}>
       <HeaderWithDrawer navigation={navigation} currentRoute="Profile" />
@@ -96,7 +172,7 @@ export default function ProfileScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
 
-          <Text style={[styles.userName, { color: colors.text }]}>{perfilData?.nombres} {perfilData?.apellidos} </Text>
+          <Text style={[styles.userName, { color: colors.text }]}>{perfilData?.nombres} {perfilData?.apellidos}</Text>
           <Text style={[styles.userEmail, { color: colors.info }]}>{perfilData?.email}</Text>
           <Text style={[styles.userRole, { color: colors.textSecondary }]}>{perfilData?.funcion}</Text>
 
@@ -149,12 +225,12 @@ export default function ProfileScreen({ navigation }: Props) {
               <Text style={[styles.projectName, { color: colors.text }]}>{project.nombre_proyecto}</Text>
               <Text style={[styles.projectDescription, { color: colors.textSecondary }]}>{project.descripcion_proyecto}</Text>
               <View style={styles.projectFooter}>
-                <Text style={[styles.projectStatus, { color: colors.success }]}>Estado: { }</Text>
+                <Text style={[styles.projectStatus, { color: colors.success }]}>Estado: Activo</Text>
                 <TouchableOpacity
                   style={[styles.viewProjectButton, { backgroundColor: colors.primary }]}
                   onPress={() =>
                     navigation.navigate("Checklist", {
-                      index: project,
+                      projectId: project.nombre_proyecto, // Usar nombre_proyecto como ID
                       projectName: project.nombre_proyecto,
                       projectType: project.descripcion_proyecto,
                     })
@@ -189,10 +265,21 @@ export default function ProfileScreen({ navigation }: Props) {
                 styles.input,
                 { backgroundColor: colors.surfaceSecondary, borderColor: colors.border, color: colors.text },
               ]}
-              placeholder="Nombre completo"
+              placeholder="Nombres"
               placeholderTextColor={colors.textTertiary}
               value={editForm.nombres}
               onChangeText={(text) => setEditForm({ ...editForm, nombres: text })}
+            />
+
+            <TextInput
+              style={[
+                styles.input,
+                { backgroundColor: colors.surfaceSecondary, borderColor: colors.border, color: colors.text },
+              ]}
+              placeholder="Apellidos"
+              placeholderTextColor={colors.textTertiary}
+              value={editForm.apellidos}
+              onChangeText={(text) => setEditForm({ ...editForm, apellidos: text })}
             />
 
             <TextInput
@@ -205,6 +292,17 @@ export default function ProfileScreen({ navigation }: Props) {
               value={editForm.email}
               onChangeText={(text) => setEditForm({ ...editForm, email: text })}
               keyboardType="email-address"
+            />
+
+            <TextInput
+              style={[
+                styles.input,
+                { backgroundColor: colors.surfaceSecondary, borderColor: colors.border, color: colors.text },
+              ]}
+              placeholder="Función"
+              placeholderTextColor={colors.textTertiary}
+              value={editForm.funcion}
+              onChangeText={(text) => setEditForm({ ...editForm, funcion: text })}
             />
 
             <TextInput
@@ -230,6 +328,12 @@ export default function ProfileScreen({ navigation }: Props) {
               keyboardType="phone-pad"
             />
 
+            {editErrorMessage ? (
+              <Text style={[styles.errorText, { color: colors.error, marginBottom: 10 }]}>
+                {editErrorMessage}
+              </Text>
+            ) : null}
+
             <View style={styles.modalActions}>
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: colors.textTertiary }]}
@@ -241,8 +345,11 @@ export default function ProfileScreen({ navigation }: Props) {
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: colors.success }]}
                 onPress={handleUpdateProfile}
+                disabled={editLoading}
               >
-                <Text style={[styles.modalButtonText, { color: colors.primaryText }]}>Guardar</Text>
+                <Text style={[styles.modalButtonText, { color: colors.primaryText }]}>
+                  {editLoading ? 'Guardando...' : 'Guardar'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -323,6 +430,7 @@ export default function ProfileScreen({ navigation }: Props) {
   )
 }
 
+// Agregar estilos adicionales
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -489,5 +597,34 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+  },
+  retryButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 })

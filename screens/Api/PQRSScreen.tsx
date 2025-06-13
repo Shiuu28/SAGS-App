@@ -456,7 +456,6 @@ export default function PQRSScreen({ navigation }: Props) {
             <FlatList
                 data={filteredPQRS}
                 renderItem={renderPQRSCard}
-                keyExtractor={(item) => item.id_opi.toString()}
                 contentContainerStyle={styles.pqrsList}
                 showsVerticalScrollIndicator={false}
             />
